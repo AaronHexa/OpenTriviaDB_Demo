@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/mainPagrFragment">
+
+    <fragment
+        android:id="@+id/testingFragment"
+        android:name="com.example.hexa_aaronlee.opentriviadb_demo.TestingFragment"
+        android:label="fragment_testing"
+        tools:layout="@layout/fragment_testing" />
+    <fragment
+        android:id="@+id/mainPagrFragment"
+        android:name="com.example.hexa_aaronlee.opentriviadb_demo.Fragment.MainPageFragment"
+        android:label="fragment_main_pagr"
+        tools:layout="@layout/fragment_main_page" >
+        <action
+            android:id="@+id/nav_mainPagrFragment_to_questionPageFragment"
+            app:destination="@id/questionPageFragment" />
+        <action
+            android:id="@+id/nav_mainPagrFragment_to_viewQuestionPageFragment"
+            app:destination="@id/viewQuestionPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/questionPageFragment"
+        android:name="com.example.hexa_aaronlee.opentriviadb_demo.Fragment.QuestionPageFragment"
+        android:label="fragment_question_page"
+        tools:layout="@layout/fragment_question_page" />
+    <fragment
+        android:id="@+id/viewQuestionPageFragment"
+        android:name="com.example.hexa_aaronlee.opentriviadb_demo.Fragment.ViewQuestionPageFragment"
+        android:label="fragment_view_question_page"
+        tools:layout="@layout/fragment_view_question_page" />
+</navigation>
