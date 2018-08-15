@@ -6,5 +6,5 @@ import com.fasterxml.jackson.annotation.JsonProperty
 class CategoryData {
 
     @JsonProperty("trivia_categories")
-    lateinit var triviaCategories : List<TriviaCategory>
+    lateinit var triviaCategories : ArrayList<TriviaCategory>
 }

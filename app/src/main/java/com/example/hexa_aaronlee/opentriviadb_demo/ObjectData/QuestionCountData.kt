@@ -1,15 +1,15 @@
 package com.example.hexa_aaronlee.opentriviadb_demo.ObjectData
 
-import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.InnerObject.Categories
-import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.InnerObject.Overall
+import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.InnerObject.CategoryQuestionCount
 import com.fasterxml.jackson.annotation.JsonProperty
 
 
 
 class QuestionCountData {
 
-    @JsonProperty("overall")
-    lateinit var overall: Overall
-    @JsonProperty("categories")
-    lateinit var categories: Categories
+    @JsonProperty("category_id")
+    var categoryId: Int = 0
+
+    @JsonProperty("category_question_count")
+    lateinit var categoryQuestionCount: CategoryQuestionCount
 }

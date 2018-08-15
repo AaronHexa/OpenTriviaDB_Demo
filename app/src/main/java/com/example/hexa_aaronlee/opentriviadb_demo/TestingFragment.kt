@@ -27,10 +27,10 @@ class TestingFragment : Fragment() {
     lateinit var jsonApi: TokenAPI
     lateinit var resetApi: ResetApi
     lateinit var mObservable: Observable<TokenData>
-    lateinit var mToken : String
-    var token_response_code : Long = 0
+    lateinit var mToken: String
+    var token_response_code: Long = 0
     lateinit var mapper: ObjectMapper
-    lateinit var retrofit : Retrofit
+    lateinit var retrofit: Retrofit
     lateinit var mQuestionCountApi: QuestionCountApi
     lateinit var mCategoryApi: CategoryApi
     lateinit var mQuestionApi: QuestionApi
@@ -60,12 +60,12 @@ class TestingFragment : Fragment() {
 
         //RequestCategory()
 
-        //RequestAllQuestionCount()
+        RequestAllQuestionCount()
 
-        RequestQuestion()
+        //RequestQuestion()
     }
 
-    fun RequestToken(){
+    fun RequestToken() {
 
         jsonApi = retrofit.create(TokenAPI::class.java)
 
@@ -73,8 +73,7 @@ class TestingFragment : Fragment() {
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<TokenData>
-                {
+                .subscribe(object : Observer<TokenData> {
                     override fun onNext(t: TokenData) {
                         Log.i("Get Data", "${t.token} / ${t.response_code}")
                         token_response_code = t.response_code
@@ -90,24 +89,23 @@ class TestingFragment : Fragment() {
                     }
 
                     override fun onError(e: Throwable) {
-                        Log.e("Error",e.toString())
+                        Log.e("Error", e.toString())
                     }
 
                 })
     }
 
-    fun ResetToken(){
+    fun ResetToken() {
         mToken = "ac7e4f8a320d72f9ed3c9a1b416e54915fce0ea88208aac0e1d35455611bb52f"
         val resetUrl = "api_token.php?command=reset&token="
 
         resetApi = retrofit.create(ResetApi::class.java)
 
-        val mObservable = resetApi.resetToken(resetUrl+mToken)
+        val mObservable = resetApi.resetToken(resetUrl + mToken)
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<ResetData>
-                {
+                .subscribe(object : Observer<ResetData> {
                     override fun onNext(t: ResetData) {
                         Log.i("Get Data", "${t.token} / ${t.response_code}")
                     }
@@ -121,21 +119,20 @@ class TestingFragment : Fragment() {
                     }
 
                     override fun onError(e: Throwable) {
-                        Log.e("Error",e.toString())
+                        Log.e("Error", e.toString())
                     }
 
                 })
     }
 
-    fun RequestCategory(){
+    fun RequestCategory() {
         mCategoryApi = retrofit.create(CategoryApi::class.java)
 
         val mObservable = mCategoryApi.getAllCategoryData()
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<CategoryData>
-                {
+                .subscribe(object : Observer<CategoryData> {
                     override fun onNext(t: CategoryData) {
                         Log.i("Get Data", "${t.triviaCategories[0].name} / ${t.triviaCategories[0].id}")
                     }
@@ -149,27 +146,27 @@ class TestingFragment : Fragment() {
                     }
 
                     override fun onError(e: Throwable) {
-                        Log.e("Error",e.toString())
+                        Log.e("Error", e.toString())
                     }
 
                 })
     }
 
-    fun RequestAllQuestionCount(){
+    fun RequestAllQuestionCount() {
         mQuestionCountApi = retrofit.create(QuestionCountApi::class.java)
 
-        val mObservable = mQuestionCountApi.getQuestionCountData()
+        val dataUrl = "api_count.php?category=9"
+
+        val mObservable = mQuestionCountApi.getQuestionCountData(dataUrl)
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<QuestionCountData>
-                {
+                .subscribe(object : Observer<QuestionCountData> {
                     override fun onNext(t: QuestionCountData) {
-                        Log.i("Get Data", "overall : ${t.overall.totalNumOfVerifiedQuestions} / category id 9 : ${t.categories.categoryItem9.totalNumOfVerifiedQuestions}")
+                        Log.i("Get Count", "overall : ${t.categoryQuestionCount.totalCount} / category id 9 : ${t.categoryQuestionCount.easyCount}")
                     }
 
                     override fun onComplete() {
-
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -177,14 +174,13 @@ class TestingFragment : Fragment() {
                     }
 
                     override fun onError(e: Throwable) {
-                        Log.e("Error",e.toString())
+                        Log.e("Error", e.toString())
                     }
-
                 })
     }
 
 
-    fun RequestQuestion(){
+    fun RequestQuestion() {
         mToken = "ac7e4f8a320d72f9ed3c9a1b416e54915fce0ea88208aac0e1d35455611bb52f"
         val questionUrl = "api.php?amount=1&category=30&token="
 
@@ -197,12 +193,11 @@ class TestingFragment : Fragment() {
 
         mQuestionApi = retrofit.create(QuestionApi::class.java)
 
-        val mObservable = mQuestionApi.getSelectedQuestion(questionUrl+mToken)
+        val mObservable = mQuestionApi.getSelectedQuestion(questionUrl + mToken)
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<QuestionData>
-                {
+                .subscribe(object : Observer<QuestionData> {
                     override fun onNext(t: QuestionData) {
                         Log.i("Get Data", "Response Code : ${t.responseCode} / Question Category : ${t.results[0].category}")
                     }
@@ -216,7 +211,7 @@ class TestingFragment : Fragment() {
                     }
 
                     override fun onError(e: Throwable) {
-                        Log.e("Error",e.toString())
+                        Log.e("Error", e.toString())
                     }
 
                 })
