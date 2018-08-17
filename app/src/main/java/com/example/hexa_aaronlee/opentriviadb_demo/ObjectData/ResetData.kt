@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 class ResetData {
 
     @JsonProperty("response_code")
-    var response_code : Long = 0
+    var response_code: Long = 0
 
     @JsonProperty("token")
-    var token : String = ""
+    var token: String = ""
 }

@@ -8,5 +8,5 @@ import retrofit2.http.Url
 interface QuestionApi {
 
     @GET
-    fun getSelectedQuestion(@Url token : String) : Observable<QuestionData>
+    fun getSelectedQuestion(@Url token: String): Observable<QuestionData>
 }

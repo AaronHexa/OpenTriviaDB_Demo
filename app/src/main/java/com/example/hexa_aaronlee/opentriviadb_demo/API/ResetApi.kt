@@ -8,6 +8,6 @@ import retrofit2.http.Url
 interface ResetApi {
 
     @GET
-    fun resetToken(@Url token : String) : Observable<ResetData>
+    fun resetToken(@Url token: String): Observable<ResetData>
 
 }

@@ -1,21 +1,12 @@
-package com.example.hexa_aaronlee.opentriviadb_demo.Fragment
+package com.example.hexa_aaronlee.opentriviadb_demo.Presenter
 
-import android.content.Context
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import com.example.hexa_aaronlee.opentriviadb_demo.API.CategoryApi
 import com.example.hexa_aaronlee.opentriviadb_demo.API.QuestionCountApi
-import com.example.hexa_aaronlee.opentriviadb_demo.Adapter.QuestionCountAdapter
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.CategoryData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionCountData
-import com.example.hexa_aaronlee.opentriviadb_demo.R
+import com.example.hexa_aaronlee.opentriviadb_demo.View.ViewQuestionCountView
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -24,46 +15,19 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_view_question_page.*
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.util.*
-import kotlin.collections.ArrayList
 
+class ViewQuestionCountPresenter(internal val mView: ViewQuestionCountView.View) : ViewQuestionCountView.Presenter {
 
-class ViewQuestionPageFragment : Fragment() {
 
     lateinit var mapper: ObjectMapper
     lateinit var retrofit: Retrofit
+    lateinit var myCategoryApi: CategoryApi
     lateinit var mQuestionCountApi: QuestionCountApi
-    lateinit var mQuestionCountArray: ArrayList<Int>
-    lateinit var mEasyCountArray: ArrayList<Int>
-    lateinit var mMediumCountArray: ArrayList<Int>
-    lateinit var mHardCountArray: ArrayList<Int>
-    lateinit var mCategoryArray: ArrayList<String>
-    lateinit var mCategoryIdArray: ArrayList<String>
 
-    lateinit var mCategoryApi: CategoryApi
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_question_page, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        mQuestionCountArray = ArrayList()
-        mEasyCountArray = ArrayList()
-        mMediumCountArray = ArrayList()
-        mHardCountArray = ArrayList()
-        mCategoryArray = ArrayList()
-        mCategoryIdArray = ArrayList()
-
-        loadingListData.visibility = View.VISIBLE
-
+    override fun setRetrofitAndMapper(myView: View) {
         mapper = ObjectMapper()
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         mapper.visibilityChecker = VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY)
@@ -73,18 +37,18 @@ class ViewQuestionPageFragment : Fragment() {
                 .addConverterFactory(JacksonConverterFactory.create(mapper))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
-
-        listViewCount.setHasFixedSize(true)
-        listViewCount.layoutManager = LinearLayoutManager(view.context)
-
-        RequestCategory()
     }
 
-    fun RequestCategory() {
+    override fun RequestGetCategory(mCategoryArray: ArrayList<String>,
+                                    mCategoryIdArray: ArrayList<String>,
+                                    mQuestionCountArray: ArrayList<Int>,
+                                    mEasyCountArray: ArrayList<Int>,
+                                    mMediumCountArray: ArrayList<Int>,
+                                    mHardCountArray: ArrayList<Int>) {
 
-        mCategoryApi = retrofit.create(CategoryApi::class.java)
+        myCategoryApi = retrofit.create(CategoryApi::class.java)
 
-        val mObservable = mCategoryApi.getAllCategoryData()
+        val mObservable = myCategoryApi.getAllCategoryData()
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -93,14 +57,13 @@ class ViewQuestionPageFragment : Fragment() {
                         for (i in 0 until t.triviaCategories.size) {
                             mCategoryArray.add(t.triviaCategories[i].name)
                             mCategoryIdArray.add(t.triviaCategories[i].id.toString())
-                            Log.i("Get Data", mCategoryArray[i])
+                            //Log.i("Get Data", mCategoryArray[i])
                         }
 
                     }
 
                     override fun onComplete() {
-                        Log.i("Get Data", "Complete")
-                        RequestAllQuestionCount()
+                        RequestAllQuestionCount(mCategoryArray, mCategoryIdArray, mQuestionCountArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -108,13 +71,18 @@ class ViewQuestionPageFragment : Fragment() {
                     }
 
                     override fun onError(e: Throwable) {
-                        Log.e("Error", e.toString())
+                        mView.showErrorGetData(e.message!!)
                     }
 
                 })
     }
 
-    fun RequestAllQuestionCount() {
+    fun RequestAllQuestionCount(mCategoryArray: ArrayList<String>,
+                                mCategoryIdArray: ArrayList<String>,
+                                mQuestionCountArray: ArrayList<Int>,
+                                mEasyCountArray: ArrayList<Int>,
+                                mMediumCountArray: ArrayList<Int>,
+                                mHardCountArray: ArrayList<Int>) {
 
         var tmpCount = 0
 
@@ -134,16 +102,14 @@ class ViewQuestionPageFragment : Fragment() {
                             mEasyCountArray.add(t.categoryQuestionCount.easyCount)
                             mMediumCountArray.add(t.categoryQuestionCount.mediumCount)
                             mHardCountArray.add(t.categoryQuestionCount.hardCount)
-                            Log.i("Get Count", " ${mCategoryArray.size} = $tmpCount : ${t.categoryQuestionCount.totalCount} / category id 9 : ${t.categoryQuestionCount.easyCount}")
+                            //Log.i("Get Count", " ${mCategoryArray.size} = $tmpCount : ${t.categoryQuestionCount.totalCount} / category id 9 : ${t.categoryQuestionCount.easyCount}")
                         }
 
                         override fun onComplete() {
                             tmpCount += 1
 
                             if (tmpCount == mCategoryArray.size - 1) {
-                                Log.i("Pass by Count", "yes")
-                                loadingListData.visibility = View.INVISIBLE
-                                setListView()
+                                mView.setListView(mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
                             }
                         }
 
@@ -151,15 +117,11 @@ class ViewQuestionPageFragment : Fragment() {
                         }
 
                         override fun onError(e: Throwable) {
-                            Log.e("Error", e.toString())
+                            mView.showErrorGetData(e.message!!)
                         }
 
                     })
         }
     }
 
-    fun setListView() {
-        val myAdapter = QuestionCountAdapter(view!!.context, mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
-        listViewCount.adapter = myAdapter
-    }
 }

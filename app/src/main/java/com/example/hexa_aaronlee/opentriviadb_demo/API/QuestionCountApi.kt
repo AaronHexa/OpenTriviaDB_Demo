@@ -8,5 +8,5 @@ import retrofit2.http.Url
 interface QuestionCountApi {
 
     @GET
-    fun getQuestionCountData(@Url uriTxt : String) : Observable<QuestionCountData>
+    fun getQuestionCountData(@Url uriTxt: String): Observable<QuestionCountData>
 }

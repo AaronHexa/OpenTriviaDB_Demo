@@ -29,7 +29,7 @@
         tools:layout="@layout/fragment_question_page" />
     <fragment
         android:id="@+id/viewQuestionPageFragment"
-        android:name="com.example.hexa_aaronlee.opentriviadb_demo.Fragment.ViewQuestionPageFragment"
+        android:name="com.example.hexa_aaronlee.opentriviadb_demo.Fragment.ViewQuestionCountFragment"
         android:label="fragment_view_question_page"
         tools:layout="@layout/fragment_view_question_page" />
 </navigation>

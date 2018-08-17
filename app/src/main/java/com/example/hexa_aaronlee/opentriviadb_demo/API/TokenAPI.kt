@@ -7,5 +7,5 @@ import retrofit2.http.GET
 interface TokenAPI {
 
     @GET("api_token.php?command=request")
-    fun getToken() : Observable<TokenData>
+    fun getToken(): Observable<TokenData>
 }

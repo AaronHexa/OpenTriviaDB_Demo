@@ -1,48 +1,35 @@
 package com.example.hexa_aaronlee.opentriviadb_demo.Fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.navigation.findNavController
-import com.example.hexa_aaronlee.opentriviadb_demo.API.CategoryApi
-import com.example.hexa_aaronlee.opentriviadb_demo.MySharedPreference.SharedPreference
-import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.CategoryData
-import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.InnerObject.TriviaCategory
+import com.example.hexa_aaronlee.opentriviadb_demo.SharedPreference.MySharedPreference
+import com.example.hexa_aaronlee.opentriviadb_demo.Presenter.MainPagePresenter
 import com.example.hexa_aaronlee.opentriviadb_demo.R
-import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import com.example.hexa_aaronlee.opentriviadb_demo.RealmObject.TokenInfoData
+import com.example.hexa_aaronlee.opentriviadb_demo.View.MainPageView
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.fragment_main_page.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
+import io.realm.RealmResults
 
 
-class MainPageFragment : Fragment() {
+class MainPageFragment : Fragment(), MainPageView.View {
 
-    lateinit var mCategoryApi: CategoryApi
-    lateinit var mapper: ObjectMapper
-    lateinit var retrofit : Retrofit
-    lateinit var categoryArray : ArrayList<String>
-    lateinit var categoryIdArray : ArrayList<Long>
-    lateinit var difficultyArray : ArrayList<String>
-    lateinit var typeQuestionArray : ArrayList<String>
-    lateinit var typeQuestionIdArray : ArrayList<String>
-    lateinit var mySharedPreferences: SharedPreference
+    lateinit var categoryArray: ArrayList<String>
+    lateinit var categoryIdArray: ArrayList<Long>
+    lateinit var difficultyArray: ArrayList<String>
+    lateinit var typeQuestionArray: ArrayList<String>
+    lateinit var typeQuestionIdArray: ArrayList<String>
+    lateinit var mySharedPreferences: MySharedPreference
+    lateinit var myPresenter: MainPagePresenter
+    lateinit var myRealm: Realm
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,7 +40,13 @@ class MainPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mySharedPreferences = SharedPreference(view.context)
+        Realm.init(view.context)
+        val config = RealmConfiguration.Builder().name("token.realm").build()
+        myRealm = Realm.getInstance(config)
+
+        mySharedPreferences = MySharedPreference(view.context)
+
+        myPresenter = MainPagePresenter(this)
 
         categoryArray = ArrayList()
         categoryIdArray = ArrayList()
@@ -61,14 +54,17 @@ class MainPageFragment : Fragment() {
         categoryArray.add("Default")
         categoryIdArray.add(0)
 
-        difficultyArray = arrayListOf("Default","Easy","Medium","Hard")
-        typeQuestionArray = arrayListOf("Default","True / False","Multiple Choice")
-        typeQuestionIdArray = arrayListOf("Default","boolean","multiple")
+        difficultyArray = arrayListOf("Default", "Easy", "Medium", "Hard")
+        typeQuestionArray = arrayListOf("Default", "True / False", "Multiple Choice")
+        typeQuestionIdArray = arrayListOf("default", "boolean", "multiple")
 
-        RequestCategory()
+        myPresenter.checkTokenExistInRealm(myRealm)
+
+        myPresenter.RequestCategory(view, categoryArray, categoryIdArray, difficultyArray, typeQuestionArray)
 
 
-        nextBtn.setOnClickListener{
+
+        nextBtn.setOnClickListener {
 
             getDataFromSpinner()
 
@@ -78,169 +74,54 @@ class MainPageFragment : Fragment() {
         viewCountBtn.setOnClickListener {
             it.findNavController().navigate(R.id.nav_mainPagrFragment_to_viewQuestionPageFragment)
         }
-
-        spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Log.i("Selected Data", "${categoryArray[position]} / ${categoryIdArray[position]}")
-            }
-
-        }
-
-        spinnerDifficulty.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Log.i("Selected Data", "${difficultyArray[position]} / ${difficultyArray[position]}")
-            }
-
-        }
-
-        spinnerType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Log.i("Selected Data", "${typeQuestionArray[position]} / ${typeQuestionArray[position]}")
-            }
-
-        }
     }
 
-    fun RequestCategory(){
-
-        /*val okHttpClient = OkHttpClient.Builder()
-
-        val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
-        okHttpClient.addInterceptor(logging)*/
-
-        mapper = ObjectMapper()
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        mapper.visibilityChecker = VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-
-        retrofit = Retrofit.Builder()
-                .baseUrl("https://opentdb.com/")
-                .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-
-        mCategoryApi = retrofit.create(CategoryApi::class.java)
-
-        val mObservable = mCategoryApi.getAllCategoryData()
-
-        mObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<CategoryData>
-                {
-                    override fun onNext(t: CategoryData) {
-                        for (i in 0 until t.triviaCategories.size){
-                            categoryArray.add(t.triviaCategories[i].name)
-                            categoryIdArray.add(t.triviaCategories[i].id)
-                            Log.i("Get Data", "${categoryArray[i]} / ${categoryIdArray[i]}")
-                        }
-
-                    }
-
-                    override fun onComplete() {
-                        Log.i("Get Data", "Complete")
-                        setDataSpinner()
-                        loadingIndicator.visibility = View.INVISIBLE
-                    }
-
-                    override fun onSubscribe(d: Disposable) {
-
-                    }
-
-                    override fun onError(e: Throwable) {
-                        Log.e("Error",e.toString())
-                    }
-
-                })
+    override fun hideLoadingIndicator() {
+        loadingIndicator.visibility = View.INVISIBLE
     }
 
-    fun setDataSpinner(){
-        val categoryAdapter = ArrayAdapter(view!!.context,android.R.layout.simple_spinner_item,categoryArray)
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//Setting the ArrayAdapter data on the Spinner
+    override fun setAdapterSpinner(categoryAdapter: ArrayAdapter<String>, difficultyAdapter: ArrayAdapter<String>, typeQuestionAdapter: ArrayAdapter<String>) {
         spinnerCategory.adapter = categoryAdapter
 
-        val difficultyAdapter = ArrayAdapter(view!!.context,android.R.layout.simple_spinner_item,difficultyArray)
-        difficultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//Setting the ArrayAdapter data on the Spinner
         spinnerDifficulty.adapter = difficultyAdapter
 
-
-        val typeQuestionAdapter = ArrayAdapter(view!!.context,android.R.layout.simple_spinner_item,typeQuestionArray)
-        typeQuestionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//Setting the ArrayAdapter data on the Spinner
         spinnerType.adapter = typeQuestionAdapter
-
     }
 
-    fun randomForCategory() : Int{
-        val totalSize = categoryArray.size
-        val min = 1
 
-        return Random().nextInt((totalSize - min)+1)+min
-    }
+    fun getDataFromSpinner() {
 
-    fun randomForDifficulty() : Int{
-        val totalSize = difficultyArray.size
-        val min = 1
+        val difficulty = spinnerDifficulty.selectedItem.toString()
 
-        return Random().nextInt((totalSize - min)+1)+min
-    }
+        val categoryIdPosition = spinnerCategory.selectedItemPosition
+        val typeIdPosition = spinnerType.selectedItemPosition
 
-    fun randomForType() : Int{
-        val totalSize = typeQuestionArray.size
-        val min = 1
-
-        return Random().nextInt((totalSize - min)+1)+min
-    }
-
-    fun getDataFromSpinner(){
-
-        var category = spinnerCategory.selectedItem.toString()
-        var difficulty = spinnerDifficulty.selectedItem.toString()
-        var typeQuestion = spinnerType.selectedItem.toString()
-
-        var categoryIdPosition = spinnerCategory.selectedItemPosition
-        var difficultyIdPosition = spinnerDifficulty.selectedItemPosition
-        var typeIdPosition = spinnerType.selectedItemPosition
-
-        var categoryId = categoryIdArray[categoryIdPosition]
-
-        if(categoryIdPosition == 0){
-            categoryIdPosition = randomForCategory()
-            categoryId = categoryIdArray[categoryIdPosition]
-            category = categoryArray[categoryIdPosition]
-        }
-
-        if(difficultyIdPosition == 0){
-            difficultyIdPosition = randomForDifficulty()
-            difficulty = difficultyArray[difficultyIdPosition]
-        }
-
-        if(typeIdPosition == 0){
-            typeIdPosition = randomForType()
-
-            typeQuestion = typeQuestionIdArray[typeIdPosition]
-        }
-
+        val categoryId = categoryIdArray[categoryIdPosition]
+        val typeQuestion = typeQuestionIdArray[typeIdPosition]
 
         mySharedPreferences.setCategory(categoryId.toString())
         mySharedPreferences.setDifficulty(difficulty.toLowerCase())
         mySharedPreferences.setType(typeQuestion)
+
+    }
+
+    override fun saveTokenInSharedPreferrence(token: String, type: Int) {
+
+        if (type == 0) {
+            mySharedPreferences.setToken(token)
+        } else if (type == 1) {
+            mySharedPreferences.setToken(token)
+
+            myPresenter.saveInRealmDB(myRealm, token)
+        }
+    }
+
+    override fun showRetrieveDataError(error: String, title: String) {
+        Log.e(title, error)
+    }
+
+    override fun successfullySave() {
+        Log.i("Token Add", "Successfully")
     }
 }
 

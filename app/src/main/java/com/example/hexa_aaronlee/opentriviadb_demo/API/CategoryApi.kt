@@ -7,6 +7,6 @@ import retrofit2.http.GET
 interface CategoryApi {
 
     @GET("api_category.php")
-    fun getAllCategoryData() : Observable<CategoryData>
+    fun getAllCategoryData(): Observable<CategoryData>
 }
 

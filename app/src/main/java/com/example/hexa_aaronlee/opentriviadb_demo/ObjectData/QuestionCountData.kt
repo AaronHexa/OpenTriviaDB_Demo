@@ -4,7 +4,6 @@ import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.InnerObject.Catego
 import com.fasterxml.jackson.annotation.JsonProperty
 
 
-
 class QuestionCountData {
 
     @JsonProperty("category_id")
