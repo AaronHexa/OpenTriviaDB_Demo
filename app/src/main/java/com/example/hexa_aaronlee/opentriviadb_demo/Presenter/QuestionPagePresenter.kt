@@ -5,29 +5,22 @@ import android.util.Log
 import com.example.hexa_aaronlee.opentriviadb_demo.API.QuestionApi
 import com.example.hexa_aaronlee.opentriviadb_demo.API.ResetApi
 import com.example.hexa_aaronlee.opentriviadb_demo.API.TokenAPI
-import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.CategoryData
+import com.example.hexa_aaronlee.opentriviadb_demo.Model.RetrofitApi
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.ResetData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.TokenData
 import com.example.hexa_aaronlee.opentriviadb_demo.RealmObject.TokenInfoData
 import com.example.hexa_aaronlee.opentriviadb_demo.View.QuestionPageView
-import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
 
 class QuestionPagePresenter(internal val mView: QuestionPageView.View) : QuestionPageView.Presenter {
 
-    lateinit var mapper: ObjectMapper
     lateinit var retrofit: Retrofit
 
     lateinit var mTokenAPI: TokenAPI
@@ -35,17 +28,12 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
     lateinit var mQuestionApi: QuestionApi
     private var tmpResponseCode = 0
     private var newToken = ""
+    lateinit var RetrofitApiModel: RetrofitApi
 
     override fun setRetrofitAndMapper() {
-        mapper = ObjectMapper()
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        mapper.visibilityChecker = VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY)
 
-        retrofit = Retrofit.Builder()
-                .baseUrl("https://opentdb.com/")
-                .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+        RetrofitApiModel = RetrofitApi()
+        retrofit = RetrofitApiModel.RequestRetrofitApi()
     }
 
     override fun checkTokenAvailable(token: String) {
@@ -198,7 +186,7 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
 
                         tmpResponseCode = t.responseCode
 
-                        Log.i("bblbll", tmpResponseCode.toString())
+                        //Log.i("bblbll", tmpResponseCode.toString())
                         when (tmpResponseCode) {
                             0 -> {
                                 questionTxt = t.results[0].question

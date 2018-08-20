@@ -21,9 +21,7 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
     lateinit var mPresenter: QuestionPagePresenter
     lateinit var mySharePreference: MySharedPreference
-    private var token = "ac7e4f8a320d72f9ed3c9a1b416e54915fce0ea88208aac0e1d35455611bb52f"
-
-    private var anotherToken = "becaf1616e9b34acd5258e202bf414e447011a2475cfd4bc326e4b5e04c62ade"
+    private var token = ""
     private var mCorrectAnswer = ""
     private var selectedAnswer = ""
     lateinit var myRealm: Realm
@@ -86,7 +84,7 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
 
 
-        mPresenter.requestQuestionData(anotherToken, category, difficulty, typeQuestion)
+        mPresenter.requestQuestionData(token, category, difficulty, typeQuestion)
     }
 
     override fun showRetrieveDataError(error: String, functionName: String) {
@@ -107,6 +105,9 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
     override fun updateQuestionToUI(questionTxt: String, difficultyQuestion: String, correctAnswer: String, answerArray: ArrayList<String>, type: String) {
         loadingQuestion.visibility = View.INVISIBLE
+
+        answerLayout2.visibility = View.VISIBLE
+        answerLayout3.visibility = View.VISIBLE
 
         questionTitle.text = questionTxt
         questionDifficulty.text = difficultyQuestion
@@ -133,6 +134,8 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
         } else if (type == "boolean") {
             answerText1.text = answerArray[0]
             answerText4.text = answerArray[1]
+            answerLayout2.visibility = View.INVISIBLE
+            answerLayout3.visibility = View.INVISIBLE
         }
 
 

@@ -6,49 +6,30 @@ import android.view.View
 import android.widget.ArrayAdapter
 import com.example.hexa_aaronlee.opentriviadb_demo.API.CategoryApi
 import com.example.hexa_aaronlee.opentriviadb_demo.API.TokenAPI
+import com.example.hexa_aaronlee.opentriviadb_demo.Model.RetrofitApi
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.CategoryData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.TokenData
 import com.example.hexa_aaronlee.opentriviadb_demo.RealmObject.TokenInfoData
 import com.example.hexa_aaronlee.opentriviadb_demo.View.MainPageView
-import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_main_page.*
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.ArrayList
 
 class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.Presenter {
 
     lateinit var mCategoryApi: CategoryApi
-    lateinit var mapper: ObjectMapper
     lateinit var retrofit: Retrofit
     lateinit var mTokenAPI: TokenAPI
+    lateinit var RetrofitApiModel: RetrofitApi
 
     override fun RequestCategory(mView: View, categoryArray: ArrayList<String>, categoryIdArray: ArrayList<Long>, difficultyArray: ArrayList<String>, typeQuestionArray: ArrayList<String>) {
 
-        /*val okHttpClient = OkHttpClient.Builder()
-
-        val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
-        okHttpClient.addInterceptor(logging)*/
-
-        mapper = ObjectMapper()
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        mapper.visibilityChecker = VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-
-        retrofit = Retrofit.Builder()
-                .baseUrl("https://opentdb.com/")
-                .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+        RetrofitApiModel = RetrofitApi()
+        retrofit = RetrofitApiModel.RequestRetrofitApi()
 
         mCategoryApi = retrofit.create(CategoryApi::class.java)
 
@@ -118,15 +99,8 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
 
         var newToken = ""
 
-        mapper = ObjectMapper()
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        mapper.visibilityChecker = VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-
-        retrofit = Retrofit.Builder()
-                .baseUrl("https://opentdb.com/")
-                .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+        RetrofitApiModel = RetrofitApi()
+        retrofit = RetrofitApiModel.RequestRetrofitApi()
 
         mTokenAPI = retrofit.create(TokenAPI::class.java)
 
