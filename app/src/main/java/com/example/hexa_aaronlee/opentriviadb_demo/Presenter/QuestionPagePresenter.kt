@@ -178,7 +178,6 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
         mQuestionApi = retrofit.create(QuestionApi::class.java)
 
         val mObservable = mQuestionApi.getSelectedQuestion(tmpUrl)
-
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<QuestionData> {

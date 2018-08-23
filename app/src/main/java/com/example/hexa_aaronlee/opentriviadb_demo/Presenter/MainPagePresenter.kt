@@ -16,6 +16,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import retrofit2.Retrofit
 import java.util.ArrayList
 
@@ -82,17 +83,23 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
     }
 
     override fun checkTokenExistInRealm(myRealm: Realm) {
+
         val tokenExist = myRealm.where(TokenInfoData::class.java).findFirstAsync()
 
+
         if (tokenExist != null) {
-            requestNewTokenCode()
-        } else {
+
             val result = myRealm.where(TokenInfoData::class.java).findAllAsync()
             result.forEach {
                 myView.saveTokenInSharedPreferrence(it.token, 0)
             }
 
+        } else {
+
+            requestNewTokenCode()
+
         }
+
     }
 
     fun requestNewTokenCode() {
@@ -111,6 +118,7 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
                 .subscribe(object : Observer<TokenData> {
                     override fun onNext(t: TokenData) {
                         newToken = t.token
+                        Log.i("Data Key", t.token)
                     }
 
                     override fun onComplete() {

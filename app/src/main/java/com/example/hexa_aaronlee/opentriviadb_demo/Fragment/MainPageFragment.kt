@@ -62,8 +62,6 @@ class MainPageFragment : Fragment(), MainPageView.View {
 
         myPresenter.RequestCategory(view, categoryArray, categoryIdArray, difficultyArray, typeQuestionArray)
 
-
-
         nextBtn.setOnClickListener {
 
             getDataFromSpinner()
@@ -77,7 +75,7 @@ class MainPageFragment : Fragment(), MainPageView.View {
     }
 
     override fun hideLoadingIndicator() {
-        loadingIndicator.visibility = View.INVISIBLE
+        MainProgressBar.visibility = View.INVISIBLE
     }
 
     override fun setAdapterSpinner(categoryAdapter: ArrayAdapter<String>, difficultyAdapter: ArrayAdapter<String>, typeQuestionAdapter: ArrayAdapter<String>) {

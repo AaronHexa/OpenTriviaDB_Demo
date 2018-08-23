@@ -1,15 +1,19 @@
 package com.example.hexa_aaronlee.opentriviadb_demo.Fragment
 
 import android.os.Bundle
+import android.os.TransactionTooLargeException
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import com.example.hexa_aaronlee.opentriviadb_demo.MainActivity
 import com.example.hexa_aaronlee.opentriviadb_demo.Presenter.QuestionPagePresenter
 import com.example.hexa_aaronlee.opentriviadb_demo.R
+import com.example.hexa_aaronlee.opentriviadb_demo.SetMenuToolbar
 import com.example.hexa_aaronlee.opentriviadb_demo.SharedPreference.MySharedPreference
 import com.example.hexa_aaronlee.opentriviadb_demo.View.QuestionPageView
 import io.realm.Realm
@@ -25,6 +29,8 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
     private var mCorrectAnswer = ""
     private var selectedAnswer = ""
     lateinit var myRealm: Realm
+    lateinit var arrayLayout : ArrayList<ConstraintLayout>
+    lateinit var setMenuToolbar: SetMenuToolbar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -34,6 +40,10 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setMenuToolbar = SetMenuToolbar(activity as MainActivity)
+
+        setMenuToolbar.setToolbarBackIcon("Question")
 
         Realm.init(view.context)
         val config = RealmConfiguration.Builder().name("token.realm").build()
@@ -50,10 +60,10 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
         mPresenter.checkTokenAvailable(token)
 
-        loadingQuestion.visibility = View.VISIBLE
+        loadQuestionBar.visibility = View.VISIBLE
 
         anotherBtn.setOnClickListener {
-            loadingQuestion.visibility = View.VISIBLE
+            loadQuestionBar.visibility = View.VISIBLE
 
             answerLayout1.setBackgroundResource(R.color.colorWhite)
             answerLayout2.setBackgroundResource(R.color.colorWhite)
@@ -104,12 +114,12 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
     }
 
     override fun updateQuestionToUI(questionTxt: String, difficultyQuestion: String, correctAnswer: String, answerArray: ArrayList<String>, type: String) {
-        loadingQuestion.visibility = View.INVISIBLE
+        loadQuestionBar.visibility = View.INVISIBLE
 
         answerLayout2.visibility = View.VISIBLE
         answerLayout3.visibility = View.VISIBLE
 
-        questionTitle.text = questionTxt
+        questionTitle.text = Html.fromHtml(questionTxt,Html.FROM_HTML_MODE_LEGACY).toString()
         questionDifficulty.text = difficultyQuestion
 
         mCorrectAnswer = correctAnswer
@@ -127,10 +137,10 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
         }
 
         if (type == "multiple") {
-            answerText1.text = answerArray[0]
-            answerText2.text = answerArray[1]
-            answerText3.text = answerArray[2]
-            answerText4.text = answerArray[3]
+            answerText1.text = Html.fromHtml(answerArray[0],Html.FROM_HTML_MODE_LEGACY).toString()
+            answerText2.text = Html.fromHtml(answerArray[1],Html.FROM_HTML_MODE_LEGACY).toString()
+            answerText3.text = Html.fromHtml(answerArray[2],Html.FROM_HTML_MODE_LEGACY).toString()
+            answerText4.text = Html.fromHtml(answerArray[3],Html.FROM_HTML_MODE_LEGACY).toString()
         } else if (type == "boolean") {
             answerText1.text = answerArray[0]
             answerText4.text = answerArray[1]
@@ -146,12 +156,22 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
             selectedAnswer = answerText1.text.toString()
 
+            arrayLayout = ArrayList()
+            arrayLayout.add(answerLayout2)
+            arrayLayout.add(answerLayout3)
+            arrayLayout.add(answerLayout4)
+
             mPresenter.checkCorrectAnswer(mCorrectAnswer, selectedAnswer, answerLayout1)
         }
 
         answerLayout2.setOnClickListener {
 
             selectedAnswer = answerText2.text.toString()
+
+            arrayLayout = ArrayList()
+            arrayLayout.add(answerLayout1)
+            arrayLayout.add(answerLayout3)
+            arrayLayout.add(answerLayout4)
 
             mPresenter.checkCorrectAnswer(mCorrectAnswer, selectedAnswer, answerLayout2)
         }
@@ -160,6 +180,11 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
             selectedAnswer = answerText3.text.toString()
 
+            arrayLayout = ArrayList()
+            arrayLayout.add(answerLayout1)
+            arrayLayout.add(answerLayout2)
+            arrayLayout.add(answerLayout4)
+
             mPresenter.checkCorrectAnswer(mCorrectAnswer, selectedAnswer, answerLayout3)
         }
 
@@ -167,16 +192,33 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
             selectedAnswer = answerText4.text.toString()
 
+            arrayLayout = ArrayList()
+            arrayLayout.add(answerLayout1)
+            arrayLayout.add(answerLayout2)
+            arrayLayout.add(answerLayout3)
+
             mPresenter.checkCorrectAnswer(mCorrectAnswer, selectedAnswer, answerLayout4)
         }
     }
 
     override fun answerIsCorrect(answerLayout: ConstraintLayout) {
         answerLayout.setBackgroundResource(R.color.colorGreen)
+
+        for (i in arrayLayout.indices){
+            val layout = arrayLayout[i]
+
+            layout.setBackgroundResource(R.color.colorWhite)
+        }
     }
 
     override fun answerIsWrong(answerLayout: ConstraintLayout) {
         answerLayout.startAnimation(AnimationUtils.loadAnimation(view!!.context, R.anim.shake))
         answerLayout.setBackgroundResource(R.color.colorRed)
+
+        for (i in arrayLayout.indices){
+            val layout = arrayLayout[i]
+
+            layout.setBackgroundResource(R.color.colorWhite)
+        }
     }
 }

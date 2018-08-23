@@ -13,10 +13,12 @@ import android.widget.TextView
 import com.example.hexa_aaronlee.opentriviadb_demo.API.CategoryApi
 import com.example.hexa_aaronlee.opentriviadb_demo.API.QuestionCountApi
 import com.example.hexa_aaronlee.opentriviadb_demo.Adapter.QuestionCountAdapter
+import com.example.hexa_aaronlee.opentriviadb_demo.MainActivity
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.CategoryData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionCountData
 import com.example.hexa_aaronlee.opentriviadb_demo.Presenter.ViewQuestionCountPresenter
 import com.example.hexa_aaronlee.opentriviadb_demo.R
+import com.example.hexa_aaronlee.opentriviadb_demo.SetMenuToolbar
 import com.example.hexa_aaronlee.opentriviadb_demo.View.ViewQuestionCountView
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -44,6 +46,7 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
     lateinit var mCategoryIdArray: ArrayList<String>
 
     lateinit var myPresenter: ViewQuestionCountPresenter
+    lateinit var setMenuToolbar: SetMenuToolbar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -61,7 +64,11 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
         mCategoryArray = ArrayList()
         mCategoryIdArray = ArrayList()
 
-        loadingListData.visibility = View.VISIBLE
+        ViewQuestionBar.visibility = View.VISIBLE
+
+        setMenuToolbar = SetMenuToolbar(activity as MainActivity)
+
+        setMenuToolbar.setToolbarBackIcon("Question Category")
 
         myPresenter = ViewQuestionCountPresenter(this)
 
@@ -75,7 +82,7 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
 
     override fun setListView(mQuestionCountArray: ArrayList<Int>, mCategoryArray: ArrayList<String>, mEasyCountArray: ArrayList<Int>, mMediumCountArray: ArrayList<Int>, mHardCountArray: ArrayList<Int>) {
 
-        loadingListData.visibility = View.INVISIBLE
+        ViewQuestionBar.visibility = View.INVISIBLE
 
         val myAdapter = QuestionCountAdapter(view!!.context, mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
         listViewCount.adapter = myAdapter
