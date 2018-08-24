@@ -6,11 +6,6 @@
     app:startDestination="@id/mainPagrFragment">
 
     <fragment
-        android:id="@+id/testingFragment"
-        android:name="com.example.hexa_aaronlee.opentriviadb_demo.TestingFragment"
-        android:label="fragment_testing"
-        tools:layout="@layout/fragment_testing" />
-    <fragment
         android:id="@+id/mainPagrFragment"
         android:name="com.example.hexa_aaronlee.opentriviadb_demo.Fragment.MainPageFragment"
         android:label="fragment_main_pagr"

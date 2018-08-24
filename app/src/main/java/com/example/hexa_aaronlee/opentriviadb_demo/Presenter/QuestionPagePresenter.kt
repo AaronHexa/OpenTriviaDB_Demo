@@ -116,7 +116,7 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
                 .subscribe(object : Observer<TokenData> {
                     override fun onNext(t: TokenData) {
                         newToken = t.token
-                        //Log.i("New Token",t.token.toString())
+                        Log.i("New Token",t.token.toString())
                     }
 
                     override fun onComplete() {
@@ -138,7 +138,10 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
     override fun saveInRealmDB(myRealm: Realm, token: String) {
         val result = myRealm.where(TokenInfoData::class.java).findAllAsync()
         result.forEach {
+            myRealm.beginTransaction()
             it.token = token
+            myRealm.commitTransaction()
+            Log.i("realm token","${it.token} ///  $token")
         }
     }
 

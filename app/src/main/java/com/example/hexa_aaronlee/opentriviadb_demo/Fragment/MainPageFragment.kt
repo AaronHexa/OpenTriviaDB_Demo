@@ -8,16 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.navigation.findNavController
+import com.example.hexa_aaronlee.opentriviadb_demo.MainActivity
 import com.example.hexa_aaronlee.opentriviadb_demo.SharedPreference.MySharedPreference
 import com.example.hexa_aaronlee.opentriviadb_demo.Presenter.MainPagePresenter
 import com.example.hexa_aaronlee.opentriviadb_demo.R
-import com.example.hexa_aaronlee.opentriviadb_demo.RealmObject.TokenInfoData
 import com.example.hexa_aaronlee.opentriviadb_demo.View.MainPageView
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.fragment_main_page.*
 import java.util.*
-import io.realm.RealmResults
 
 
 class MainPageFragment : Fragment(), MainPageView.View {
@@ -43,6 +42,8 @@ class MainPageFragment : Fragment(), MainPageView.View {
         Realm.init(view.context)
         val config = RealmConfiguration.Builder().name("token.realm").build()
         myRealm = Realm.getInstance(config)
+
+        (activity as MainActivity).supportActionBar!!.title = resources.getString(R.string.app_name)
 
         mySharedPreferences = MySharedPreference(view.context)
 

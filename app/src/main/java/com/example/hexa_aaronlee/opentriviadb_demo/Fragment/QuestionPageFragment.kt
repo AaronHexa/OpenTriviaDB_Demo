@@ -1,7 +1,6 @@
 package com.example.hexa_aaronlee.opentriviadb_demo.Fragment
 
 import android.os.Bundle
-import android.os.TransactionTooLargeException
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.text.Html
@@ -13,7 +12,6 @@ import android.view.animation.AnimationUtils
 import com.example.hexa_aaronlee.opentriviadb_demo.MainActivity
 import com.example.hexa_aaronlee.opentriviadb_demo.Presenter.QuestionPagePresenter
 import com.example.hexa_aaronlee.opentriviadb_demo.R
-import com.example.hexa_aaronlee.opentriviadb_demo.SetMenuToolbar
 import com.example.hexa_aaronlee.opentriviadb_demo.SharedPreference.MySharedPreference
 import com.example.hexa_aaronlee.opentriviadb_demo.View.QuestionPageView
 import io.realm.Realm
@@ -30,7 +28,6 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
     private var selectedAnswer = ""
     lateinit var myRealm: Realm
     lateinit var arrayLayout : ArrayList<ConstraintLayout>
-    lateinit var setMenuToolbar: SetMenuToolbar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -41,16 +38,14 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setMenuToolbar = SetMenuToolbar(activity as MainActivity)
-
-        setMenuToolbar.setToolbarBackIcon("Question")
-
         Realm.init(view.context)
         val config = RealmConfiguration.Builder().name("token.realm").build()
         myRealm = Realm.getInstance(config)
 
         mPresenter = QuestionPagePresenter(this)
         mySharePreference = MySharedPreference(view.context)
+
+        (activity as MainActivity).supportActionBar!!.title = "Question"
 
         token = mySharePreference.getToken()
 

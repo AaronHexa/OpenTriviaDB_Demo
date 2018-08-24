@@ -1,38 +1,18 @@
 package com.example.hexa_aaronlee.opentriviadb_demo.Fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import com.example.hexa_aaronlee.opentriviadb_demo.API.CategoryApi
-import com.example.hexa_aaronlee.opentriviadb_demo.API.QuestionCountApi
 import com.example.hexa_aaronlee.opentriviadb_demo.Adapter.QuestionCountAdapter
 import com.example.hexa_aaronlee.opentriviadb_demo.MainActivity
-import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.CategoryData
-import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionCountData
 import com.example.hexa_aaronlee.opentriviadb_demo.Presenter.ViewQuestionCountPresenter
 import com.example.hexa_aaronlee.opentriviadb_demo.R
-import com.example.hexa_aaronlee.opentriviadb_demo.SetMenuToolbar
 import com.example.hexa_aaronlee.opentriviadb_demo.View.ViewQuestionCountView
-import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_view_question_page.*
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.jackson.JacksonConverterFactory
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -46,7 +26,6 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
     lateinit var mCategoryIdArray: ArrayList<String>
 
     lateinit var myPresenter: ViewQuestionCountPresenter
-    lateinit var setMenuToolbar: SetMenuToolbar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -64,11 +43,9 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
         mCategoryArray = ArrayList()
         mCategoryIdArray = ArrayList()
 
+        (activity as MainActivity).supportActionBar!!.title = "Question Category"
+
         ViewQuestionBar.visibility = View.VISIBLE
-
-        setMenuToolbar = SetMenuToolbar(activity as MainActivity)
-
-        setMenuToolbar.setToolbarBackIcon("Question Category")
 
         myPresenter = ViewQuestionCountPresenter(this)
 
