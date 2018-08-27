@@ -1,5 +1,6 @@
 package com.example.hexa_aaronlee.opentriviadb_demo.Fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
@@ -45,8 +46,8 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
         mPresenter = QuestionPagePresenter(this)
         mySharePreference = MySharedPreference(view.context)
 
-        (activity as MainActivity).supportActionBar!!.title = "Question"
-        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        (activity as MainActivity).supportActionBar?.title = "Question"
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         token = mySharePreference.getToken()
 
@@ -231,7 +232,9 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
     }
 
     override fun answerIsWrong(answerLayout: ConstraintLayout) {
-        answerLayout.startAnimation(AnimationUtils.loadAnimation(view!!.context, R.anim.shake))
+        val context : Context = view?.context ?: throw IllegalAccessException("Context is Null")
+
+        answerLayout.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shake))
         answerLayout.setBackgroundResource(R.color.colorRed)
 
         for (i in arrayLayout.indices){

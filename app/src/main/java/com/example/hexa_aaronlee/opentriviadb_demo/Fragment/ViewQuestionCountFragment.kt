@@ -1,5 +1,6 @@
 package com.example.hexa_aaronlee.opentriviadb_demo.Fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -43,8 +44,8 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
         mCategoryArray = ArrayList()
         mCategoryIdArray = ArrayList()
 
-        (activity as MainActivity).supportActionBar!!.title = "Question Category"
-        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        (activity as MainActivity).supportActionBar?.title = "Question Category"
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         ViewQuestionBar.visibility = View.VISIBLE
 
@@ -62,7 +63,9 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
 
         ViewQuestionBar.visibility = View.INVISIBLE
 
-        val myAdapter = QuestionCountAdapter(view!!.context, mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
+        val context : Context = view?.context ?: throw IllegalAccessException("Context is Null")
+
+        val myAdapter = QuestionCountAdapter(context, mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
         listViewCount.adapter = myAdapter
     }
 

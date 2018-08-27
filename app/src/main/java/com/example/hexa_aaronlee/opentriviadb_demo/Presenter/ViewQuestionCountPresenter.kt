@@ -59,9 +59,7 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
                     }
 
                     override fun onError(e: Throwable) {
-                        if (mView != null){
-                            mView!!.showErrorGetData(e.message!!)
-                        }
+                        checkErrorIsNull(e)
                     }
 
                 })
@@ -100,7 +98,7 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
 
                             if (tmpCount == mCategoryArray.size - 1) {
                                 if (mView != null) {
-                                    mView!!.setListView(mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
+                                    mView?.setListView(mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
 
                                 }
                             }
@@ -110,9 +108,7 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
                         }
 
                         override fun onError(e: Throwable) {
-                            if (mView != null){
-                                mView!!.showErrorGetData(e.message!!)
-                            }
+                            checkErrorIsNull(e)
                         }
 
                     })
@@ -123,4 +119,8 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
         mView = null
     }
 
+    fun checkErrorIsNull(error: Throwable) {
+        val errorMsg = error.message ?: "Error Throwable Message is Null"
+        mView?.showErrorGetData(errorMsg)
+    }
 }

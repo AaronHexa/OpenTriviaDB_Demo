@@ -43,7 +43,7 @@ class MainPageFragment : Fragment(), MainPageView.View {
         val config = RealmConfiguration.Builder().name("token.realm").build()
         myRealm = Realm.getInstance(config)
 
-        (activity as MainActivity).supportActionBar!!.title = resources.getString(R.string.app_name)
+        (activity as MainActivity).supportActionBar?.title = resources.getString(R.string.app_name)
 
         mySharedPreferences = MySharedPreference(view.context)
 

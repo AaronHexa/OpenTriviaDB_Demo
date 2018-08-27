@@ -25,31 +25,33 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(actionBar)
 
-        NavigationUI.setupActionBarWithNavController(this,navController)
+        NavigationUI.setupActionBarWithNavController(this, navController)
 
         checkFragmentPage()
     }
 
-    fun checkFragmentPage(){
-        val currentFragment = findNavController(R.id.my_nav_host).currentDestination!!.id
+    fun checkFragmentPage() {
+        val currentFragment = findNavController(R.id.my_nav_host).currentDestination?.id
+
 
         when (currentFragment) {
-            R.id.mainPagrFragment -> supportActionBar!!.title = resources.getString(R.string.app_name)
+            R.id.mainPagrFragment -> supportActionBar?.title = resources.getString(R.string.app_name)
             R.id.questionPageFragment -> {
-                supportActionBar!!.title = "Question"
-                supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+                supportActionBar?.title = "Question"
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
             R.id.viewQuestionPageFragment -> {
-                supportActionBar!!.title = "Question Category"
-                supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+                supportActionBar?.title = "Question Category"
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
         }
+
     }
 
     override fun onSupportNavigateUp() = findNavController(R.id.my_nav_host).navigateUp()
 
     override fun onBackPressed() {
-        val currentFragment = findNavController(R.id.my_nav_host).currentDestination!!.id
+        val currentFragment = findNavController(R.id.my_nav_host).currentDestination?.id
 
         when (currentFragment) {
             R.id.mainPagrFragment -> finish()

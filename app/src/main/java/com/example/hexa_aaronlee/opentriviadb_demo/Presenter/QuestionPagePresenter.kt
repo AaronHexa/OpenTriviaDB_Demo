@@ -57,7 +57,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
                             3 -> requestNewToken()
                             else -> {
                                 if (mView != null) {
-                                    mView!!.getRequirementQuestion()
+                                    mView?.getRequirementQuestion()
                                 }
                             }
                         }
@@ -72,9 +72,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
                     }
 
                     override fun onError(e: Throwable) {
-                        if (mView != null) {
-                            mView!!.showRetrieveDataError(e.message!!, "Check Token")
-                        }
+                        checkErrorIsNull(e, "Check Token")
                     }
 
                 })
@@ -97,7 +95,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
                     override fun onComplete() {
                         if (tmpResponseCode == 0) {
                             if (mView != null) {
-                                mView!!.showResetDone()
+                                mView?.showResetDone()
                             }
                         } else if (tmpResponseCode == 3) {
                             requestNewToken()
@@ -109,9 +107,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
                     }
 
                     override fun onError(e: Throwable) {
-                        if (mView != null) {
-                            mView!!.showRetrieveDataError(e.message!!, "Reset Token")
-                        }
+                        checkErrorIsNull(e, "Reset Token")
                     }
 
                 })
@@ -133,7 +129,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
 
                     override fun onComplete() {
                         if (mView != null) {
-                            mView!!.saveNewToken(newToken)
+                            mView?.saveNewToken(newToken)
                         }
                     }
 
@@ -142,9 +138,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
                     }
 
                     override fun onError(e: Throwable) {
-                        if (mView != null) {
-                            mView!!.showRetrieveDataError(e.message!!, "Create Token")
-                        }
+                        checkErrorIsNull(e, "Create Token")
                     }
 
                 })
@@ -156,7 +150,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
             myRealm.beginTransaction()
             it.token = token
             myRealm.commitTransaction()
-            Log.i("realm token", "${it.token} ///  $token")
+            //Log.i("realm token", "${it.token} ///  $token")
         }
     }
 
@@ -229,7 +223,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
 
                     override fun onComplete() {
                         if (mView != null) {
-                            mView!!.updateQuestionToUI(questionTxt, difficultyQuestion, correctAnswer, answerArray, type)
+                            mView?.updateQuestionToUI(questionTxt, difficultyQuestion, correctAnswer, answerArray, type)
                         }
 
                     }
@@ -239,23 +233,20 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
                     }
 
                     override fun onError(e: Throwable) {
-                        if (mView != null) {
-                            mView!!.showRetrieveDataError(e.message!!, "Get Question")
-                        }
+                        checkErrorIsNull(e, "Get Question")
                     }
-
                 })
     }
 
     override fun checkCorrectAnswer(correctAnswer: String, selectedAnswer: String, answerLayout: ConstraintLayout) {
         if (selectedAnswer == correctAnswer) {
             if (mView != null) {
-                mView!!.answerIsCorrect(answerLayout)
+                mView?.answerIsCorrect(answerLayout)
             }
 
         } else {
             if (mView != null) {
-                mView!!.answerIsWrong(answerLayout)
+                mView?.answerIsWrong(answerLayout)
             }
         }
     }
@@ -265,6 +256,11 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
 
         /*val newView = WeakReference<View>(mView)
         newView.clear()*/
+    }
+
+    fun checkErrorIsNull(error: Throwable, errorPartName: String) {
+        val errorMsg = error.message ?: "Error Throwable Message is Null"
+        mView?.showRetrieveDataError(errorMsg, errorPartName)
     }
 
 }

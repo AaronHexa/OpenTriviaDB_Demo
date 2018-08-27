@@ -50,7 +50,7 @@ class MainPagePresenter(internal var myView: MainPageView.View?) : MainPageView.
 
                     override fun onComplete() {
                         setDataSpinner(mView, categoryArray, difficultyArray, typeQuestionArray)
-                        myView!!.hideLoadingIndicator()
+                        myView?.hideLoadingIndicator()
 
                     }
 
@@ -59,8 +59,7 @@ class MainPagePresenter(internal var myView: MainPageView.View?) : MainPageView.
                     }
 
                     override fun onError(e: Throwable) {
-                        myView!!.showRetrieveDataError(e.message!!, "Spinner Data")
-
+                        checkNullError(e,"Spinner Data")
                     }
 
                 })
@@ -79,7 +78,7 @@ class MainPagePresenter(internal var myView: MainPageView.View?) : MainPageView.
 
 
         //Setting the ArrayAdapter data on the Spinner
-        myView!!.setAdapterSpinner(categoryAdapter, difficultyAdapter, typeQuestionAdapter)
+        myView?.setAdapterSpinner(categoryAdapter, difficultyAdapter, typeQuestionAdapter)
     }
 
     override fun checkTokenExistInRealm(myRealm: Realm) {
@@ -91,7 +90,7 @@ class MainPagePresenter(internal var myView: MainPageView.View?) : MainPageView.
 
             val result = myRealm.where(TokenInfoData::class.java).findAllAsync()
             result.forEach {
-                myView!!.saveTokenInSharedPreferrence(it.token, 0)
+                myView?.saveTokenInSharedPreferrence(it.token, 0)
             }
 
         } else {
@@ -122,7 +121,7 @@ class MainPagePresenter(internal var myView: MainPageView.View?) : MainPageView.
                     }
 
                     override fun onComplete() {
-                        myView!!.saveTokenInSharedPreferrence(newToken, 1)
+                        myView?.saveTokenInSharedPreferrence(newToken, 1)
 
                     }
 
@@ -131,7 +130,7 @@ class MainPagePresenter(internal var myView: MainPageView.View?) : MainPageView.
                     }
 
                     override fun onError(e: Throwable) {
-                        myView!!.showRetrieveDataError(e.message!!, "Create Token")
+                        checkNullError(e,"Create Token")
                     }
 
                 })
@@ -143,9 +142,16 @@ class MainPagePresenter(internal var myView: MainPageView.View?) : MainPageView.
             user.token = token
 
         }, {
-            myView!!.successfullySave()
+            myView?.successfullySave()
         }, {
-            myView!!.showRetrieveDataError(it.message!!, "Error Realm")
+            checkNullError(it, "Error Realm")
         })
+    }
+
+    fun checkNullError(error: Throwable, errorPartName: String) {
+
+        val errorMsg = error.message ?: "Error Throwable Message is Null"
+        myView?.showRetrieveDataError(errorMsg, errorPartName)
+
     }
 }
