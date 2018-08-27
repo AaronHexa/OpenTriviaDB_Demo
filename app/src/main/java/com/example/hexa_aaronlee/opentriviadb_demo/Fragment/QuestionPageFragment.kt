@@ -46,6 +46,7 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
         mySharePreference = MySharedPreference(view.context)
 
         (activity as MainActivity).supportActionBar!!.title = "Question"
+        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         token = mySharePreference.getToken()
 
@@ -57,27 +58,9 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
         loadQuestionBar.visibility = View.VISIBLE
 
-        anotherBtn.setOnClickListener {
-            loadQuestionBar.visibility = View.VISIBLE
+        anotherBtn.isClickable = false
 
-            answerLayout1.setBackgroundResource(R.color.colorWhite)
-            answerLayout2.setBackgroundResource(R.color.colorWhite)
-            answerLayout3.setBackgroundResource(R.color.colorWhite)
-            answerLayout4.setBackgroundResource(R.color.colorWhite)
-
-            questionTitle.text = ""
-            questionDifficulty.text = null
-            answerText1.text = ""
-            answerText2.text = ""
-            answerText3.text = ""
-            answerText4.text = ""
-
-            token = mySharePreference.getToken()
-
-            mPresenter.checkTokenAvailable(token)
-        }
-
-        setButtonOnClick(view)
+        setButtonNoClickable()
 
     }
 
@@ -143,10 +126,17 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
             answerLayout3.visibility = View.INVISIBLE
         }
 
-
+        setButtonOnClick()
     }
 
-    fun setButtonOnClick(view: View) {
+    fun setButtonOnClick() {
+
+        answerLayout1.isClickable = true
+        answerLayout2.isClickable = true
+        answerLayout3.isClickable = true
+        answerLayout4.isClickable = true
+        anotherBtn.isClickable = true
+
         answerLayout1.setOnClickListener {
 
             selectedAnswer = answerText1.text.toString()
@@ -194,6 +184,40 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
             mPresenter.checkCorrectAnswer(mCorrectAnswer, selectedAnswer, answerLayout4)
         }
+
+        anotherBtn.setOnClickListener {
+            loadQuestionBar.visibility = View.VISIBLE
+
+            answerLayout1.setBackgroundResource(R.color.colorWhite)
+            answerLayout2.setBackgroundResource(R.color.colorWhite)
+            answerLayout3.setBackgroundResource(R.color.colorWhite)
+            answerLayout4.setBackgroundResource(R.color.colorWhite)
+
+            questionTitle.text = ""
+            questionDifficulty.text = null
+            answerText1.text = ""
+            answerText2.text = ""
+            answerText3.text = ""
+            answerText4.text = ""
+
+            token = mySharePreference.getToken()
+
+            mPresenter.checkTokenAvailable(token)
+
+            setButtonNoClickable()
+            anotherBtn.isClickable = false
+        }
+    }
+
+    fun setButtonNoClickable() {
+        answerLayout1.isClickable = false
+
+        answerLayout2.isClickable = false
+
+        answerLayout3.isClickable = false
+
+        answerLayout4.isClickable = false
+
     }
 
     override fun answerIsCorrect(answerLayout: ConstraintLayout) {
@@ -215,5 +239,10 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
 
             layout.setBackgroundResource(R.color.colorWhite)
         }
+    }
+
+    override fun onDestroy() {
+        mPresenter.onDestroy()
+        super.onDestroy()
     }
 }

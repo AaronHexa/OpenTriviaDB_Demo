@@ -23,5 +23,6 @@ interface ViewQuestionCountView {
                                mEasyCountArray: ArrayList<Int>,
                                mMediumCountArray: ArrayList<Int>,
                                mHardCountArray: ArrayList<Int>)
+        fun onDestroy()
     }
 }

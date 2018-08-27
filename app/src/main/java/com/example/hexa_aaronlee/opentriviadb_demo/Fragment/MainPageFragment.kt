@@ -63,16 +63,9 @@ class MainPageFragment : Fragment(), MainPageView.View {
 
         myPresenter.RequestCategory(view, categoryArray, categoryIdArray, difficultyArray, typeQuestionArray)
 
-        nextBtn.setOnClickListener {
+        nextBtn.isClickable = false
 
-            getDataFromSpinner()
-
-            it.findNavController().navigate(R.id.nav_mainPagrFragment_to_questionPageFragment)
-        }
-
-        viewCountBtn.setOnClickListener {
-            it.findNavController().navigate(R.id.nav_mainPagrFragment_to_viewQuestionPageFragment)
-        }
+        viewCountBtn.isClickable = false
     }
 
     override fun hideLoadingIndicator() {
@@ -85,6 +78,21 @@ class MainPageFragment : Fragment(), MainPageView.View {
         spinnerDifficulty.adapter = difficultyAdapter
 
         spinnerType.adapter = typeQuestionAdapter
+
+        nextBtn.isClickable = true
+
+        viewCountBtn.isClickable = true
+
+        nextBtn.setOnClickListener {
+
+            getDataFromSpinner()
+
+            it.findNavController().navigate(R.id.nav_mainPagrFragment_to_questionPageFragment)
+        }
+
+        viewCountBtn.setOnClickListener {
+            it.findNavController().navigate(R.id.nav_mainPagrFragment_to_viewQuestionPageFragment)
+        }
     }
 
 
@@ -121,6 +129,10 @@ class MainPageFragment : Fragment(), MainPageView.View {
 
     override fun successfullySave() {
         Log.i("Token Add", "Successfully")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }
 

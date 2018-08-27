@@ -49,6 +49,10 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp() = findNavController(R.id.my_nav_host).navigateUp()
 
     override fun onBackPressed() {
-       onSupportNavigateUp()
+        val currentFragment = findNavController(R.id.my_nav_host).currentDestination!!.id
+
+        when (currentFragment) {
+            R.id.mainPagrFragment -> finish()
+        }
     }
 }

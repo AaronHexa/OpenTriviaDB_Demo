@@ -2,6 +2,7 @@ package com.example.hexa_aaronlee.opentriviadb_demo.View
 
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TabLayout
+import android.view.View
 import io.realm.Realm
 
 interface QuestionPageView {
@@ -43,5 +44,7 @@ interface QuestionPageView {
                                answerLayout: ConstraintLayout)
 
         fun saveInRealmDB(myRealm: Realm, token: String)
+
+        fun onDestroy()
     }
 }

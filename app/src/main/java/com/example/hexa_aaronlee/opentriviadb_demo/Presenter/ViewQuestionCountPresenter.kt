@@ -14,8 +14,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
 
-class ViewQuestionCountPresenter(internal val mView: ViewQuestionCountView.View) : ViewQuestionCountView.Presenter {
-
+class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?) : ViewQuestionCountView.Presenter {
 
     lateinit var retrofit: Retrofit
     lateinit var myCategoryApi: CategoryApi
@@ -60,7 +59,9 @@ class ViewQuestionCountPresenter(internal val mView: ViewQuestionCountView.View)
                     }
 
                     override fun onError(e: Throwable) {
-                        mView.showErrorGetData(e.message!!)
+                        if (mView != null){
+                            mView!!.showErrorGetData(e.message!!)
+                        }
                     }
 
                 })
@@ -98,7 +99,10 @@ class ViewQuestionCountPresenter(internal val mView: ViewQuestionCountView.View)
                             tmpCount += 1
 
                             if (tmpCount == mCategoryArray.size - 1) {
-                                mView.setListView(mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
+                                if (mView != null) {
+                                    mView!!.setListView(mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
+
+                                }
                             }
                         }
 
@@ -106,11 +110,17 @@ class ViewQuestionCountPresenter(internal val mView: ViewQuestionCountView.View)
                         }
 
                         override fun onError(e: Throwable) {
-                            mView.showErrorGetData(e.message!!)
+                            if (mView != null){
+                                mView!!.showErrorGetData(e.message!!)
+                            }
                         }
 
                     })
         }
+    }
+
+    override fun onDestroy() {
+        mView = null
     }
 
 }

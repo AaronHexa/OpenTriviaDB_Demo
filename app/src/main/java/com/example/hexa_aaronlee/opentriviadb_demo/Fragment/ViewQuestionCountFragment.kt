@@ -44,6 +44,7 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
         mCategoryIdArray = ArrayList()
 
         (activity as MainActivity).supportActionBar!!.title = "Question Category"
+        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         ViewQuestionBar.visibility = View.VISIBLE
 
@@ -67,5 +68,10 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
 
     override fun showErrorGetData(e: String) {
         Log.e("Get Data Error", e)
+    }
+
+    override fun onDestroy() {
+        myPresenter.onDestroy()
+        super.onDestroy()
     }
 }

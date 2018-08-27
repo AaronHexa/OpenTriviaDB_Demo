@@ -2,6 +2,7 @@ package com.example.hexa_aaronlee.opentriviadb_demo.Presenter
 
 import android.support.constraint.ConstraintLayout
 import android.util.Log
+import android.view.View
 import com.example.hexa_aaronlee.opentriviadb_demo.API.QuestionApi
 import com.example.hexa_aaronlee.opentriviadb_demo.API.ResetApi
 import com.example.hexa_aaronlee.opentriviadb_demo.API.TokenAPI
@@ -17,9 +18,10 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import retrofit2.Retrofit
+import java.lang.ref.WeakReference
 import java.util.*
 
-class QuestionPagePresenter(internal val mView: QuestionPageView.View) : QuestionPageView.Presenter {
+class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : QuestionPageView.Presenter {
 
     lateinit var retrofit: Retrofit
 
@@ -53,7 +55,11 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
                         when (tmpResponseCode) {
                             4 -> resetToken(token)
                             3 -> requestNewToken()
-                            else -> mView.getRequirementQuestion()
+                            else -> {
+                                if (mView != null) {
+                                    mView!!.getRequirementQuestion()
+                                }
+                            }
                         }
                     }
 
@@ -66,7 +72,9 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
                     }
 
                     override fun onError(e: Throwable) {
-                        mView.showRetrieveDataError(e.message!!, "Check Token")
+                        if (mView != null) {
+                            mView!!.showRetrieveDataError(e.message!!, "Check Token")
+                        }
                     }
 
                 })
@@ -88,7 +96,9 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
 
                     override fun onComplete() {
                         if (tmpResponseCode == 0) {
-                            mView.showResetDone()
+                            if (mView != null) {
+                                mView!!.showResetDone()
+                            }
                         } else if (tmpResponseCode == 3) {
                             requestNewToken()
                         }
@@ -99,7 +109,9 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
                     }
 
                     override fun onError(e: Throwable) {
-                        mView.showRetrieveDataError(e.message!!, "Reset Token")
+                        if (mView != null) {
+                            mView!!.showRetrieveDataError(e.message!!, "Reset Token")
+                        }
                     }
 
                 })
@@ -116,12 +128,13 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
                 .subscribe(object : Observer<TokenData> {
                     override fun onNext(t: TokenData) {
                         newToken = t.token
-                        Log.i("New Token",t.token.toString())
+                        Log.i("New Token", t.token.toString())
                     }
 
                     override fun onComplete() {
-                        mView.saveNewToken(newToken)
-
+                        if (mView != null) {
+                            mView!!.saveNewToken(newToken)
+                        }
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -129,7 +142,9 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
                     }
 
                     override fun onError(e: Throwable) {
-                        mView.showRetrieveDataError(e.message!!, "Create Token")
+                        if (mView != null) {
+                            mView!!.showRetrieveDataError(e.message!!, "Create Token")
+                        }
                     }
 
                 })
@@ -141,7 +156,7 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
             myRealm.beginTransaction()
             it.token = token
             myRealm.commitTransaction()
-            Log.i("realm token","${it.token} ///  $token")
+            Log.i("realm token", "${it.token} ///  $token")
         }
     }
 
@@ -213,7 +228,10 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
                     }
 
                     override fun onComplete() {
-                        mView.updateQuestionToUI(questionTxt, difficultyQuestion, correctAnswer, answerArray, type)
+                        if (mView != null) {
+                            mView!!.updateQuestionToUI(questionTxt, difficultyQuestion, correctAnswer, answerArray, type)
+                        }
+
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -221,7 +239,9 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
                     }
 
                     override fun onError(e: Throwable) {
-                        mView.showRetrieveDataError(e.message!!, "Get Question")
+                        if (mView != null) {
+                            mView!!.showRetrieveDataError(e.message!!, "Get Question")
+                        }
                     }
 
                 })
@@ -229,11 +249,22 @@ class QuestionPagePresenter(internal val mView: QuestionPageView.View) : Questio
 
     override fun checkCorrectAnswer(correctAnswer: String, selectedAnswer: String, answerLayout: ConstraintLayout) {
         if (selectedAnswer == correctAnswer) {
-            mView.answerIsCorrect(answerLayout)
+            if (mView != null) {
+                mView!!.answerIsCorrect(answerLayout)
+            }
+
         } else {
-            mView.answerIsWrong(answerLayout)
+            if (mView != null) {
+                mView!!.answerIsWrong(answerLayout)
+            }
         }
     }
 
+    override fun onDestroy() {
+        mView = null
+
+        /*val newView = WeakReference<View>(mView)
+        newView.clear()*/
+    }
 
 }

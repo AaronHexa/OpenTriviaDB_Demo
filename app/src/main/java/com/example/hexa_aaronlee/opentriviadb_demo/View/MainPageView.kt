@@ -6,7 +6,7 @@ import io.realm.Realm
 import java.util.ArrayList
 
 interface MainPageView {
-    interface View {
+    interface View{
         fun hideLoadingIndicator()
         fun setAdapterSpinner(categoryAdapter: ArrayAdapter<String>,
                               difficultyAdapter: ArrayAdapter<String>,
@@ -29,5 +29,6 @@ interface MainPageView {
         fun checkTokenExistInRealm(myRealm: Realm)
 
         fun saveInRealmDB(myRealm: Realm, token: String)
+
     }
 }

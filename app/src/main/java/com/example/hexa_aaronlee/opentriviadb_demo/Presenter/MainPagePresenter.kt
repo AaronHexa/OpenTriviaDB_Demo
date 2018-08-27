@@ -20,7 +20,7 @@ import io.realm.RealmConfiguration
 import retrofit2.Retrofit
 import java.util.ArrayList
 
-class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.Presenter {
+class MainPagePresenter(internal var myView: MainPageView.View?) : MainPageView.Presenter {
 
     lateinit var mCategoryApi: CategoryApi
     lateinit var retrofit: Retrofit
@@ -50,7 +50,7 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
 
                     override fun onComplete() {
                         setDataSpinner(mView, categoryArray, difficultyArray, typeQuestionArray)
-                        myView.hideLoadingIndicator()
+                        myView!!.hideLoadingIndicator()
 
                     }
 
@@ -59,7 +59,7 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
                     }
 
                     override fun onError(e: Throwable) {
-                        myView.showRetrieveDataError(e.message!!, "Spinner Data")
+                        myView!!.showRetrieveDataError(e.message!!, "Spinner Data")
 
                     }
 
@@ -79,7 +79,7 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
 
 
         //Setting the ArrayAdapter data on the Spinner
-        myView.setAdapterSpinner(categoryAdapter, difficultyAdapter, typeQuestionAdapter)
+        myView!!.setAdapterSpinner(categoryAdapter, difficultyAdapter, typeQuestionAdapter)
     }
 
     override fun checkTokenExistInRealm(myRealm: Realm) {
@@ -91,7 +91,7 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
 
             val result = myRealm.where(TokenInfoData::class.java).findAllAsync()
             result.forEach {
-                myView.saveTokenInSharedPreferrence(it.token, 0)
+                myView!!.saveTokenInSharedPreferrence(it.token, 0)
             }
 
         } else {
@@ -122,7 +122,7 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
                     }
 
                     override fun onComplete() {
-                        myView.saveTokenInSharedPreferrence(newToken, 1)
+                        myView!!.saveTokenInSharedPreferrence(newToken, 1)
 
                     }
 
@@ -131,7 +131,7 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
                     }
 
                     override fun onError(e: Throwable) {
-                        myView.showRetrieveDataError(e.message!!, "Create Token")
+                        myView!!.showRetrieveDataError(e.message!!, "Create Token")
                     }
 
                 })
@@ -143,9 +143,9 @@ class MainPagePresenter(internal val myView: MainPageView.View) : MainPageView.P
             user.token = token
 
         }, {
-            myView.successfullySave()
+            myView!!.successfullySave()
         }, {
-            myView.showRetrieveDataError(it.message!!, "Error Realm")
+            myView!!.showRetrieveDataError(it.message!!, "Error Realm")
         })
     }
 }
