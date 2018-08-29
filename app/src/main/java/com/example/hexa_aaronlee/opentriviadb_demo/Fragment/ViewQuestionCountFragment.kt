@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.hexa_aaronlee.opentriviadb_demo.Adapter.QuestionCountAdapter
 import com.example.hexa_aaronlee.opentriviadb_demo.MainActivity
+import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionCountArray
 import com.example.hexa_aaronlee.opentriviadb_demo.Presenter.ViewQuestionCountPresenter
 import com.example.hexa_aaronlee.opentriviadb_demo.R
 import com.example.hexa_aaronlee.opentriviadb_demo.View.ViewQuestionCountView
@@ -18,13 +19,6 @@ import kotlin.collections.ArrayList
 
 
 class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
-
-    lateinit var mQuestionCountArray: ArrayList<Int>
-    lateinit var mEasyCountArray: ArrayList<Int>
-    lateinit var mMediumCountArray: ArrayList<Int>
-    lateinit var mHardCountArray: ArrayList<Int>
-    lateinit var mCategoryArray: ArrayList<String>
-    lateinit var mCategoryIdArray: ArrayList<String>
 
     lateinit var myPresenter: ViewQuestionCountPresenter
 
@@ -37,12 +31,7 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mQuestionCountArray = ArrayList()
-        mEasyCountArray = ArrayList()
-        mMediumCountArray = ArrayList()
-        mHardCountArray = ArrayList()
-        mCategoryArray = ArrayList()
-        mCategoryIdArray = ArrayList()
+        //QuestionCountArray.resetArray()
 
         (activity as MainActivity).supportActionBar?.title = "Question Category"
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -56,16 +45,16 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
         listViewCount.setHasFixedSize(true)
         listViewCount.layoutManager = LinearLayoutManager(view.context)
 
-        myPresenter.RequestGetCategory(mCategoryArray, mCategoryIdArray, mQuestionCountArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
+        myPresenter.RequestGetCategory()
     }
 
-    override fun setListView(mQuestionCountArray: ArrayList<Int>, mCategoryArray: ArrayList<String>, mEasyCountArray: ArrayList<Int>, mMediumCountArray: ArrayList<Int>, mHardCountArray: ArrayList<Int>) {
+    override fun setListView() {
 
         ViewQuestionBar.visibility = View.INVISIBLE
 
         val context : Context = view?.context ?: throw IllegalAccessException("Context is Null")
 
-        val myAdapter = QuestionCountAdapter(context, mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
+        val myAdapter = QuestionCountAdapter(context)
         listViewCount.adapter = myAdapter
     }
 

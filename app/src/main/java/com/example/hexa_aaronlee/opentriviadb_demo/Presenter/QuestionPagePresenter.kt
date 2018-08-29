@@ -2,11 +2,9 @@ package com.example.hexa_aaronlee.opentriviadb_demo.Presenter
 
 import android.support.constraint.ConstraintLayout
 import android.util.Log
-import android.view.View
-import com.example.hexa_aaronlee.opentriviadb_demo.API.QuestionApi
-import com.example.hexa_aaronlee.opentriviadb_demo.API.ResetApi
-import com.example.hexa_aaronlee.opentriviadb_demo.API.TokenAPI
+import com.example.hexa_aaronlee.opentriviadb_demo.API.ApiServices
 import com.example.hexa_aaronlee.opentriviadb_demo.Model.RetrofitApi
+import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.GetDetailQuestionData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.ResetData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.TokenData
@@ -18,33 +16,30 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import retrofit2.Retrofit
-import java.lang.ref.WeakReference
-import java.util.*
 
 class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : QuestionPageView.Presenter {
 
     lateinit var retrofit: Retrofit
 
-    lateinit var mTokenAPI: TokenAPI
-    lateinit var mResetApi: ResetApi
-    lateinit var mQuestionApi: QuestionApi
+    lateinit var mApiServices: ApiServices
     private var tmpResponseCode = 0
     private var newToken = ""
     lateinit var RetrofitApiModel: RetrofitApi
+    lateinit var dataQuestion : GetDetailQuestionData
 
     override fun setRetrofitAndMapper() {
 
         RetrofitApiModel = RetrofitApi()
-        retrofit = RetrofitApiModel.RequestRetrofitApi()
+        retrofit = RetrofitApiModel.requestRetrofitApi()
     }
 
     override fun checkTokenAvailable(token: String) {
 
         val tmpUrl = "api.php?amount=1&token=$token"
 
-        mQuestionApi = retrofit.create(QuestionApi::class.java)
+        mApiServices = retrofit.create(ApiServices::class.java)
 
-        val mObservable = mQuestionApi.getSelectedQuestion(tmpUrl)
+        val mObservable = mApiServices.getSelectedQuestion(tmpUrl)
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -81,9 +76,9 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
     fun resetToken(token: String) {
         val resetUrl = "api_token.php?command=reset&token=$token"
 
-        mResetApi = retrofit.create(ResetApi::class.java)
+        mApiServices = retrofit.create(ApiServices::class.java)
 
-        val mObservable = mResetApi.resetToken(resetUrl)
+        val mObservable = mApiServices.resetToken(resetUrl)
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -115,9 +110,9 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
 
     fun requestNewToken() {
 
-        mTokenAPI = retrofit.create(TokenAPI::class.java)
+        mApiServices = retrofit.create(ApiServices::class.java)
 
-        val mObservable = mTokenAPI.getToken()
+        val mObservable = mApiServices.getToken()
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -161,11 +156,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
         var typeQuestionUrl = ""
 
         //Question
-        var questionTxt = ""
-        var difficultyQuestion = ""
-        val answerArray = ArrayList<String>()
-        var correctAnswer = ""
-        var type = ""
+        dataQuestion = GetDetailQuestionData()
 
         if (category != "0") {
             categoryUrl = "&category=$category"
@@ -187,9 +178,9 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
 
         val tmpUrl = "api.php?amount=1$categoryUrl$difficultyUrl$typeQuestionUrl&token=$token"
 
-        mQuestionApi = retrofit.create(QuestionApi::class.java)
+        mApiServices = retrofit.create(ApiServices::class.java)
 
-        val mObservable = mQuestionApi.getSelectedQuestion(tmpUrl)
+        val mObservable = mApiServices.getSelectedQuestion(tmpUrl)
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<QuestionData> {
@@ -200,17 +191,17 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
                         //Log.i("bblbll", tmpResponseCode.toString())
                         when (tmpResponseCode) {
                             0 -> {
-                                questionTxt = t.results[0].question
-                                difficultyQuestion = t.results[0].difficulty
-                                correctAnswer = t.results[0].correctAnswer
-                                answerArray.add(t.results[0].correctAnswer)
-                                type = t.results[0].type
+                                dataQuestion.questionTxt = t.results[0].question
+                                dataQuestion.difficultyQuestion = t.results[0].difficulty
+                                dataQuestion.correctAnswer = t.results[0].correctAnswer
+                                dataQuestion.answerArray.add(t.results[0].correctAnswer)
+                                dataQuestion.type = t.results[0].type
 
                                 for (i in t.results[0].incorrectAnswers.indices) {
-                                    answerArray.add(t.results[0].incorrectAnswers[i])
+                                    dataQuestion.answerArray.add(t.results[0].incorrectAnswers[i])
                                 }
 
-                                answerArray.shuffle()
+                                dataQuestion.answerArray.shuffle()
                             }
                             3 -> {
                                 requestNewToken()
@@ -223,7 +214,7 @@ class QuestionPagePresenter(internal var mView: QuestionPageView.View?) : Questi
 
                     override fun onComplete() {
                         if (mView != null) {
-                            mView?.updateQuestionToUI(questionTxt, difficultyQuestion, correctAnswer, answerArray, type)
+                            mView?.updateQuestionToUI(dataQuestion)
                         }
 
                     }

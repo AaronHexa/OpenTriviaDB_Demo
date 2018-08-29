@@ -2,10 +2,10 @@ package com.example.hexa_aaronlee.opentriviadb_demo.Presenter
 
 import android.util.Log
 import android.view.View
-import com.example.hexa_aaronlee.opentriviadb_demo.API.CategoryApi
-import com.example.hexa_aaronlee.opentriviadb_demo.API.QuestionCountApi
+import com.example.hexa_aaronlee.opentriviadb_demo.API.ApiServices
 import com.example.hexa_aaronlee.opentriviadb_demo.Model.RetrofitApi
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.CategoryData
+import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionCountArray
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionCountData
 import com.example.hexa_aaronlee.opentriviadb_demo.View.ViewQuestionCountView
 import io.reactivex.Observer
@@ -17,41 +17,35 @@ import retrofit2.Retrofit
 class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?) : ViewQuestionCountView.Presenter {
 
     lateinit var retrofit: Retrofit
-    lateinit var myCategoryApi: CategoryApi
-    lateinit var mQuestionCountApi: QuestionCountApi
+    lateinit var mApiServices: ApiServices
     lateinit var RetrofitApiModel: RetrofitApi
 
     override fun setRetrofitAndMapper(myView: View) {
 
         RetrofitApiModel = RetrofitApi()
-        retrofit = RetrofitApiModel.RequestRetrofitApi()
+        retrofit = RetrofitApiModel.requestRetrofitApi()
     }
 
-    override fun RequestGetCategory(mCategoryArray: ArrayList<String>,
-                                    mCategoryIdArray: ArrayList<String>,
-                                    mQuestionCountArray: ArrayList<Int>,
-                                    mEasyCountArray: ArrayList<Int>,
-                                    mMediumCountArray: ArrayList<Int>,
-                                    mHardCountArray: ArrayList<Int>) {
+    override fun RequestGetCategory() {
 
-        myCategoryApi = retrofit.create(CategoryApi::class.java)
+        mApiServices = retrofit.create(ApiServices::class.java)
 
-        val mObservable = myCategoryApi.getAllCategoryData()
+        val mObservable = mApiServices.getAllCategoryData()
 
         mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<CategoryData> {
                     override fun onNext(t: CategoryData) {
                         for (i in 0 until t.triviaCategories.size) {
-                            mCategoryArray.add(t.triviaCategories[i].name)
-                            mCategoryIdArray.add(t.triviaCategories[i].id.toString())
-                            //Log.i("Get Data", mCategoryArray[i])
+                            QuestionCountArray.mCategoryArray.add(t.triviaCategories[i].name)
+                            QuestionCountArray.mCategoryIdArray.add(t.triviaCategories[i].id.toString())
+                            Log.i("Get Data", QuestionCountArray.mCategoryIdArray[i])
                         }
 
                     }
 
                     override fun onComplete() {
-                        RequestAllQuestionCount(mCategoryArray, mCategoryIdArray, mQuestionCountArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
+                        RequestAllQuestionCount()
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -65,42 +59,42 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
                 })
     }
 
-    fun RequestAllQuestionCount(mCategoryArray: ArrayList<String>,
-                                mCategoryIdArray: ArrayList<String>,
-                                mQuestionCountArray: ArrayList<Int>,
-                                mEasyCountArray: ArrayList<Int>,
-                                mMediumCountArray: ArrayList<Int>,
-                                mHardCountArray: ArrayList<Int>) {
+    fun RequestAllQuestionCount() {
 
         var tmpCount = 0
 
-        mQuestionCountApi = retrofit.create(QuestionCountApi::class.java)
+        mApiServices = retrofit.create(ApiServices::class.java)
 
-        for (i in 0 until mCategoryArray.size) {
+        for (i in QuestionCountArray.mCategoryArray.indices) {
 
-            val dataUrl = "api_count.php?category=${mCategoryIdArray[i]}"
+            Log.i("count" , i.toString())
 
-            val mObservable = mQuestionCountApi.getQuestionCountData(dataUrl)
+            val dataUrl = "api_count.php?category=${QuestionCountArray.mCategoryIdArray[i]}"
+
+            val mObservable = mApiServices.getQuestionCountData(dataUrl)
 
             mObservable.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : Observer<QuestionCountData> {
                         override fun onNext(t: QuestionCountData) {
-                            mQuestionCountArray.add(t.categoryQuestionCount.totalCount)
-                            mEasyCountArray.add(t.categoryQuestionCount.easyCount)
-                            mMediumCountArray.add(t.categoryQuestionCount.mediumCount)
-                            mHardCountArray.add(t.categoryQuestionCount.hardCount)
-                            //Log.i("Get Count", " ${mCategoryArray.size} = $tmpCount : ${t.categoryQuestionCount.totalCount} / category id 9 : ${t.categoryQuestionCount.easyCount}")
+                            QuestionCountArray.mCountArray.add(t.categoryQuestionCount.totalCount)
+                            QuestionCountArray.mEasyCountArray.add(t.categoryQuestionCount.easyCount)
+                            QuestionCountArray.mMediumCountArray.add(t.categoryQuestionCount.mediumCount)
+                            QuestionCountArray.mHardCountArray.add(t.categoryQuestionCount.hardCount)
+                            Log.i("Get Count", " ${t.categoryQuestionCount.totalCount}; id = ${QuestionCountArray.mCategoryIdArray[i]} : " +
+                                    "${t.categoryQuestionCount.easyCount}}/ $i")
                         }
 
                         override fun onComplete() {
+
                             tmpCount += 1
 
-                            if (tmpCount == mCategoryArray.size - 1) {
+                            if (tmpCount == QuestionCountArray.mCategoryArray.size - 1) {
                                 if (mView != null) {
-                                    mView?.setListView(mQuestionCountArray, mCategoryArray, mEasyCountArray, mMediumCountArray, mHardCountArray)
+                                    mView?.setListView()
 
                                 }
+
                             }
                         }
 

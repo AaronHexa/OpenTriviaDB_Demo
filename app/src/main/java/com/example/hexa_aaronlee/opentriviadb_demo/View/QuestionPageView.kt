@@ -3,6 +3,7 @@ package com.example.hexa_aaronlee.opentriviadb_demo.View
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TabLayout
 import android.view.View
+import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.GetDetailQuestionData
 import io.realm.Realm
 
 interface QuestionPageView {
@@ -17,11 +18,7 @@ interface QuestionPageView {
 
         fun saveNewToken(token: String)
 
-        fun updateQuestionToUI(questionTxt: String,
-                               difficultyQuestion: String,
-                               correctAnswer: String,
-                               answerArray: ArrayList<String>,
-                               type: String)
+        fun updateQuestionToUI(dataQuestion : GetDetailQuestionData)
 
         fun answerIsCorrect(answerLayout: ConstraintLayout)
 

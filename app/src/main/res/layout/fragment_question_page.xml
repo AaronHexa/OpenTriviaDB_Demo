@@ -21,23 +21,23 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent = "0.4"
         android:layout_margin="20dp"
         android:background="@color/colorWhite"
+        android:elevation="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintTop_toTopOf="parent"
-        android:elevation="6dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="180dp"
+            android:layout_marginTop="12dp"
             android:text="Question:"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -51,8 +51,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginTop="15dp"
+            android:layout_marginEnd="16dp"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +62,7 @@
             android:id="@+id/questionDifficulty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="16dp"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -74,8 +74,8 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -83,25 +83,27 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/answerLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:background="@color/colorWhite"
         android:elevation="6dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintHeight_percent = "0.15"
+        app:layout_constraintWidth_percent = "0.4">
 
         <TextView
             android:id="@+id/answerText1"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="25dp"
-            android:textAlignment="center"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp"
             android:maxLines="3"
+            android:textAlignment="center"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -113,27 +115,29 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/answerLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="20dp"
         android:background="@color/colorWhite"
         android:elevation="6dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/answerLayout4">
+        app:layout_constraintTop_toBottomOf="@+id/answerLayout4"
+        app:layout_constraintHeight_percent = "0.15"
+        app:layout_constraintWidth_percent = "0.4">
 
         <TextView
             android:id="@+id/answerText2"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="25dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp"
             android:maxLines="3"
+            android:textAlignment="center"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -143,23 +147,25 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/answerLayout3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
         android:background="@color/colorWhite"
         android:elevation="6dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/answerLayout1">
+        app:layout_constraintTop_toBottomOf="@+id/answerLayout1"
+        app:layout_constraintHeight_percent = "0.15"
+        app:layout_constraintWidth_percent = "0.4">
 
         <TextView
             android:id="@+id/answerText3"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="25dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp"
             android:maxLines="3"
             android:textAlignment="center"
             android:textSize="14sp"
@@ -173,23 +179,25 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/answerLayout4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:background="@color/colorWhite"
         android:elevation="6dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintHeight_percent = "0.15"
+        app:layout_constraintWidth_percent = "0.4">
 
         <TextView
             android:id="@+id/answerText4"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="25dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp"
             android:maxLines="3"
             android:textAlignment="center"
             android:textSize="14sp"
@@ -205,13 +213,13 @@
         android:id="@+id/anotherBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/round_box"
+        android:elevation="6sp"
         android:text="Roll Another"
         android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/round_box"
-        android:elevation="6sp"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

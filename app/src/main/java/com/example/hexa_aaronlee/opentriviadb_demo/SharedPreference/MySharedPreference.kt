@@ -11,7 +11,7 @@ class MySharedPreference(val mContext: Context) {
     val PREFERENCE_Type = "Type"
     val PREFERENCE_Token = "Token"
 
-    val preference = mContext.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
+    private val preference = mContext.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE) ?: throw IllegalAccessException("SharedPreferences is Null")
 
     //... Selection about Category
     fun getCategory(): String {
@@ -56,5 +56,9 @@ class MySharedPreference(val mContext: Context) {
         val editor = preference.edit()
         editor.putString(PREFERENCE_Token, token)
         editor.apply()
+    }
+
+    fun checkToken():Boolean {
+        return preference.contains(PREFERENCE_Token)
     }
 }

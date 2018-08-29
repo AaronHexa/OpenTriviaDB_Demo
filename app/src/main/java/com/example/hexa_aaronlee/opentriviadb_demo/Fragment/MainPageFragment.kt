@@ -28,7 +28,6 @@ class MainPageFragment : Fragment(), MainPageView.View {
     lateinit var typeQuestionIdArray: ArrayList<String>
     lateinit var mySharedPreferences: MySharedPreference
     lateinit var myPresenter: MainPagePresenter
-    lateinit var myRealm: Realm
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -38,10 +37,6 @@ class MainPageFragment : Fragment(), MainPageView.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        Realm.init(view.context)
-        val config = RealmConfiguration.Builder().name("token.realm").build()
-        myRealm = Realm.getInstance(config)
 
         (activity as MainActivity).supportActionBar?.title = resources.getString(R.string.app_name)
 
@@ -59,9 +54,9 @@ class MainPageFragment : Fragment(), MainPageView.View {
         typeQuestionArray = arrayListOf("Default", "True / False", "Multiple Choice")
         typeQuestionIdArray = arrayListOf("default", "boolean", "multiple")
 
-        myPresenter.checkTokenExistInRealm(myRealm)
+        myPresenter.checkTokenExistInSharePreference(mySharedPreferences)
 
-        myPresenter.RequestCategory(view, categoryArray, categoryIdArray, difficultyArray, typeQuestionArray)
+        myPresenter.requestCategory(view, categoryArray, categoryIdArray, difficultyArray, typeQuestionArray)
 
         nextBtn.isClickable = false
 
@@ -72,7 +67,20 @@ class MainPageFragment : Fragment(), MainPageView.View {
         MainProgressBar.visibility = View.INVISIBLE
     }
 
-    override fun setAdapterSpinner(categoryAdapter: ArrayAdapter<String>, difficultyAdapter: ArrayAdapter<String>, typeQuestionAdapter: ArrayAdapter<String>) {
+    override fun setAdapterSpinner(categoryArray: ArrayList<String>,
+                                   difficultyArray: ArrayList<String>,
+                                   typeQuestionArray: ArrayList<String>) {
+
+        val categoryAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, categoryArray)
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        val difficultyAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, difficultyArray)
+        difficultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+
+        val typeQuestionAdapter = ArrayAdapter(context,android.R.layout.simple_spinner_dropdown_item, typeQuestionArray)
+        typeQuestionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
         spinnerCategory.adapter = categoryAdapter
 
         spinnerDifficulty.adapter = difficultyAdapter
@@ -112,15 +120,8 @@ class MainPageFragment : Fragment(), MainPageView.View {
 
     }
 
-    override fun saveTokenInSharedPreferrence(token: String, type: Int) {
-
-        if (type == 0) {
-            mySharedPreferences.setToken(token)
-        } else if (type == 1) {
-            mySharedPreferences.setToken(token)
-
-            myPresenter.saveInRealmDB(myRealm, token)
-        }
+    override fun saveTokenInSharedPreferrence(token: String) {
+        mySharedPreferences.setToken(token)
     }
 
     override fun showRetrieveDataError(error: String, title: String) {

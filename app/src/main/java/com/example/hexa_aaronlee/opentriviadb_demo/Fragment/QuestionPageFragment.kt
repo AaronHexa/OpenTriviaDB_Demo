@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import com.example.hexa_aaronlee.opentriviadb_demo.MainActivity
+import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.GetDetailQuestionData
 import com.example.hexa_aaronlee.opentriviadb_demo.Presenter.QuestionPagePresenter
 import com.example.hexa_aaronlee.opentriviadb_demo.R
 import com.example.hexa_aaronlee.opentriviadb_demo.SharedPreference.MySharedPreference
@@ -92,18 +93,18 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
         getRequirementQuestion()
     }
 
-    override fun updateQuestionToUI(questionTxt: String, difficultyQuestion: String, correctAnswer: String, answerArray: ArrayList<String>, type: String) {
+    override fun updateQuestionToUI(dataQuestion : GetDetailQuestionData) {
         loadQuestionBar.visibility = View.INVISIBLE
 
         answerLayout2.visibility = View.VISIBLE
         answerLayout3.visibility = View.VISIBLE
 
-        questionTitle.text = Html.fromHtml(questionTxt,Html.FROM_HTML_MODE_LEGACY).toString()
-        questionDifficulty.text = difficultyQuestion
+        questionTitle.text = Html.fromHtml(dataQuestion.questionTxt,Html.FROM_HTML_MODE_LEGACY).toString()
+        questionDifficulty.text = dataQuestion.difficultyQuestion
 
-        mCorrectAnswer = correctAnswer
+        mCorrectAnswer = dataQuestion.correctAnswer
 
-        when (difficultyQuestion) {
+        when (dataQuestion.difficultyQuestion) {
             "easy" -> {
                 questionDifficulty.setBackgroundResource(R.drawable.easy_box)
             }
@@ -115,14 +116,14 @@ class QuestionPageFragment : Fragment(), QuestionPageView.View {
             }
         }
 
-        if (type == "multiple") {
-            answerText1.text = Html.fromHtml(answerArray[0],Html.FROM_HTML_MODE_LEGACY).toString()
-            answerText2.text = Html.fromHtml(answerArray[1],Html.FROM_HTML_MODE_LEGACY).toString()
-            answerText3.text = Html.fromHtml(answerArray[2],Html.FROM_HTML_MODE_LEGACY).toString()
-            answerText4.text = Html.fromHtml(answerArray[3],Html.FROM_HTML_MODE_LEGACY).toString()
-        } else if (type == "boolean") {
-            answerText1.text = answerArray[0]
-            answerText4.text = answerArray[1]
+        if (dataQuestion.type == "multiple") {
+            answerText1.text = Html.fromHtml(dataQuestion.answerArray[0],Html.FROM_HTML_MODE_LEGACY).toString()
+            answerText2.text = Html.fromHtml(dataQuestion.answerArray[1],Html.FROM_HTML_MODE_LEGACY).toString()
+            answerText3.text = Html.fromHtml(dataQuestion.answerArray[2],Html.FROM_HTML_MODE_LEGACY).toString()
+            answerText4.text = Html.fromHtml(dataQuestion.answerArray[3],Html.FROM_HTML_MODE_LEGACY).toString()
+        } else if (dataQuestion.type == "boolean") {
+            answerText1.text = dataQuestion.answerArray[0]
+            answerText4.text = dataQuestion.answerArray[1]
             answerLayout2.visibility = View.INVISIBLE
             answerLayout3.visibility = View.INVISIBLE
         }

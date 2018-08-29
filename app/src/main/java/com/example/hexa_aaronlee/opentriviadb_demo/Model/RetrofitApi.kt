@@ -1,6 +1,5 @@
 package com.example.hexa_aaronlee.opentriviadb_demo.Model
 
-import com.example.hexa_aaronlee.opentriviadb_demo.API.TokenAPI
 import com.example.hexa_aaronlee.opentriviadb_demo.BuildConfig
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -18,7 +17,7 @@ class RetrofitApi {
     lateinit var okhttpClientBuilder: OkHttpClient.Builder
     lateinit var logging: HttpLoggingInterceptor
 
-    fun RequestRetrofitApi(): Retrofit {
+    fun requestRetrofitApi(): Retrofit {
         okhttpClientBuilder = OkHttpClient.Builder()
 
         logging = HttpLoggingInterceptor()
