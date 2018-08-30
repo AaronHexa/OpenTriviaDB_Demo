@@ -6,11 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.CategoryData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionCountArray
 import com.example.hexa_aaronlee.opentriviadb_demo.R
 
 
-class QuestionCountAdapter(private val mContext: Context) : RecyclerView.Adapter<QuestionCountAdapter.ViewHolder>() {
+class QuestionCountAdapter(private val mContext: Context,
+                           val mMutableMap: MutableMap<String,QuestionCountArray>,
+                           val mCategory : ArrayList<CategoryData>) : RecyclerView.Adapter<QuestionCountAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.list_question_count_box, parent, false)
@@ -19,20 +22,20 @@ class QuestionCountAdapter(private val mContext: Context) : RecyclerView.Adapter
 
 
     override fun getItemCount(): Int {
-        return QuestionCountArray.mCategoryArray.size
+        return mCategory[0].triviaCategories.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        for (i in QuestionCountArray.mCompareId.indices){
-            if (QuestionCountArray.mCompareId[position] == QuestionCountArray.mCategoryIdArray[i]){
-                holder.categoryTxt.text = QuestionCountArray.mCategoryArray[i]
+        for (i in 0 until  mCategory[0].triviaCategories.size){
+            if (mMutableMap["$position"]?.mCategoryId == mCategory[0].triviaCategories[i].id.toString()){
+                holder.categoryTxt.text = mCategory[0].triviaCategories[i].name
             }
         }
-        holder.totalCountTxt.text = QuestionCountArray.mCountArray[position].toString()
-        holder.easyCountTxt.text = "Easy : ${QuestionCountArray.mEasyCountArray[position]}"
-        holder.mediumCountTxt.text = "Medium : ${QuestionCountArray.mMediumCountArray[position]}"
-        holder.hardCountTxt.text = "Hard : ${QuestionCountArray.mHardCountArray[position]}"
+        holder.totalCountTxt.text = mMutableMap["$position"]?.mCount.toString()
+        holder.easyCountTxt.text = "Easy : ${mMutableMap["$position"]?.mEasyCount}"
+        holder.mediumCountTxt.text = "Medium : ${mMutableMap["$position"]?.mMediumCount}"
+        holder.hardCountTxt.text = "Hard : ${mMutableMap["$position"]?.mHardCount}"
 
     }
 

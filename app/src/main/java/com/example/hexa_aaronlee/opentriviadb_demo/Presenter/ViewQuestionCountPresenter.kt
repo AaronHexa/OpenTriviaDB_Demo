@@ -19,6 +19,8 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
     lateinit var retrofit: Retrofit
     lateinit var mApiServices: ApiServices
     lateinit var RetrofitApiModel: RetrofitApi
+    lateinit var mCategoryArray: ArrayList<CategoryData>
+    lateinit var mMutableQuestionCount : MutableMap<String,QuestionCountArray>
 
     override fun setRetrofitAndMapper(myView: View) {
 
@@ -28,6 +30,8 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
 
     override fun RequestGetCategory() {
 
+        mCategoryArray = ArrayList()
+
         mApiServices = retrofit.create(ApiServices::class.java)
 
         val mObservable = mApiServices.getAllCategoryData()
@@ -36,11 +40,8 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<CategoryData> {
                     override fun onNext(t: CategoryData) {
-                        for (i in 0 until t.triviaCategories.size) {
-                            QuestionCountArray.mCategoryArray.add(t.triviaCategories[i].name)
-                            QuestionCountArray.mCategoryIdArray.add(t.triviaCategories[i].id.toString())
-                            Log.i("Get Data", QuestionCountArray.mCategoryIdArray[i])
-                        }
+                        mCategoryArray.add(t)
+                        Log.i("Get Data", mCategoryArray[0].triviaCategories.size.toString())
 
                     }
 
@@ -61,13 +62,15 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
 
     fun RequestAllQuestionCount() {
 
+        mMutableQuestionCount = mutableMapOf()
+
         var tmpCount = 0
 
         mApiServices = retrofit.create(ApiServices::class.java)
 
-        for (i in QuestionCountArray.mCategoryArray.indices) {
+        for (i in mCategoryArray[0].triviaCategories.indices) {
 
-            val categoryId = QuestionCountArray.mCategoryIdArray[i]
+            val categoryId = mCategoryArray[0].triviaCategories[i].id
 
             val dataUrl = "api_count.php?category=$categoryId"
 
@@ -77,11 +80,10 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : Observer<QuestionCountData> {
                         override fun onNext(t: QuestionCountData) {
-                            QuestionCountArray.mCountArray.add(t.categoryQuestionCount.totalCount)
-                            QuestionCountArray.mEasyCountArray.add(t.categoryQuestionCount.easyCount)
-                            QuestionCountArray.mMediumCountArray.add(t.categoryQuestionCount.mediumCount)
-                            QuestionCountArray.mHardCountArray.add(t.categoryQuestionCount.hardCount)
-                            QuestionCountArray.mCompareId.add(categoryId)
+                            val data = QuestionCountArray(t.categoryQuestionCount.totalCount,t.categoryQuestionCount.easyCount,
+                                    t.categoryQuestionCount.mediumCount,t.categoryQuestionCount.hardCount,categoryId.toString())
+
+                            mMutableQuestionCount["$i"] = data
                             Log.i("Get Count", " ${t.categoryQuestionCount.totalCount}; id = $categoryId : " +
                                     "${t.categoryQuestionCount.easyCount}}/ ")
                         }
@@ -90,9 +92,9 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
 
                             tmpCount += 1
 
-                            if (tmpCount == QuestionCountArray.mCategoryArray.size - 1) {
+                            if (tmpCount == mCategoryArray[0].triviaCategories.size - 1) {
                                 if (mView != null) {
-                                    mView?.setListView()
+                                    mView?.setListView(mMutableQuestionCount,mCategoryArray)
 
                                 }
 

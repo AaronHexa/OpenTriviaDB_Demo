@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.hexa_aaronlee.opentriviadb_demo.Adapter.QuestionCountAdapter
 import com.example.hexa_aaronlee.opentriviadb_demo.MainActivity
+import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.CategoryData
 import com.example.hexa_aaronlee.opentriviadb_demo.ObjectData.QuestionCountArray
 import com.example.hexa_aaronlee.opentriviadb_demo.Presenter.ViewQuestionCountPresenter
 import com.example.hexa_aaronlee.opentriviadb_demo.R
@@ -31,8 +32,6 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        QuestionCountArray.resetArray()
-
         (activity as MainActivity).supportActionBar?.title = "Question Category"
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -48,13 +47,14 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
         myPresenter.RequestGetCategory()
     }
 
-    override fun setListView() {
+    override fun setListView(mMutableQuestionCount : MutableMap<String,QuestionCountArray>,
+                             mCategory : ArrayList<CategoryData>) {
 
         ViewQuestionBar.visibility = View.INVISIBLE
 
         val context : Context = view?.context ?: throw IllegalAccessException("Context is Null")
 
-        val myAdapter = QuestionCountAdapter(context)
+        val myAdapter = QuestionCountAdapter(context, mMutableQuestionCount,mCategory)
         listViewCount.adapter = myAdapter
     }
 
