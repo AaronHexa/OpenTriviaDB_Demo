@@ -8,6 +8,7 @@ object QuestionCountArray {
     var mHardCountArray: ArrayList<Int> = ArrayList()
     var mCategoryArray: ArrayList<String> = ArrayList()
     var mCategoryIdArray: ArrayList<String> = ArrayList()
+    var mCompareId :ArrayList<String> = ArrayList()
 
     fun resetArray(){
         mCountArray = ArrayList()
@@ -16,6 +17,7 @@ object QuestionCountArray {
         mHardCountArray = ArrayList()
         mCategoryArray = ArrayList()
         mCategoryIdArray = ArrayList()
+        mCompareId = ArrayList()
     }
 
 }

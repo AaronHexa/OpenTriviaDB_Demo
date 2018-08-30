@@ -31,7 +31,7 @@ class ViewQuestionCountFragment : Fragment(), ViewQuestionCountView.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //QuestionCountArray.resetArray()
+        QuestionCountArray.resetArray()
 
         (activity as MainActivity).supportActionBar?.title = "Question Category"
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)

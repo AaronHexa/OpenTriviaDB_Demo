@@ -24,11 +24,15 @@ class QuestionCountAdapter(private val mContext: Context) : RecyclerView.Adapter
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.categoryTxt.text = QuestionCountArray.mCategoryArray[position]
+        for (i in QuestionCountArray.mCompareId.indices){
+            if (QuestionCountArray.mCompareId[position] == QuestionCountArray.mCategoryIdArray[i]){
+                holder.categoryTxt.text = QuestionCountArray.mCategoryArray[i]
+            }
+        }
         holder.totalCountTxt.text = QuestionCountArray.mCountArray[position].toString()
         holder.easyCountTxt.text = "Easy : ${QuestionCountArray.mEasyCountArray[position]}"
-        holder.mediumCountTxt.text = "Easy : ${QuestionCountArray.mMediumCountArray[position]}"
-        holder.hardCountTxt.text = "Easy : ${QuestionCountArray.mHardCountArray[position]}"
+        holder.mediumCountTxt.text = "Medium : ${QuestionCountArray.mMediumCountArray[position]}"
+        holder.hardCountTxt.text = "Hard : ${QuestionCountArray.mHardCountArray[position]}"
 
     }
 

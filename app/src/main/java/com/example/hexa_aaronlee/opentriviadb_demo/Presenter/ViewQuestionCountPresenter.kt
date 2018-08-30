@@ -67,9 +67,9 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
 
         for (i in QuestionCountArray.mCategoryArray.indices) {
 
-            Log.i("count" , i.toString())
+            val categoryId = QuestionCountArray.mCategoryIdArray[i]
 
-            val dataUrl = "api_count.php?category=${QuestionCountArray.mCategoryIdArray[i]}"
+            val dataUrl = "api_count.php?category=$categoryId"
 
             val mObservable = mApiServices.getQuestionCountData(dataUrl)
 
@@ -81,8 +81,9 @@ class ViewQuestionCountPresenter(internal var mView: ViewQuestionCountView.View?
                             QuestionCountArray.mEasyCountArray.add(t.categoryQuestionCount.easyCount)
                             QuestionCountArray.mMediumCountArray.add(t.categoryQuestionCount.mediumCount)
                             QuestionCountArray.mHardCountArray.add(t.categoryQuestionCount.hardCount)
-                            Log.i("Get Count", " ${t.categoryQuestionCount.totalCount}; id = ${QuestionCountArray.mCategoryIdArray[i]} : " +
-                                    "${t.categoryQuestionCount.easyCount}}/ $i")
+                            QuestionCountArray.mCompareId.add(categoryId)
+                            Log.i("Get Count", " ${t.categoryQuestionCount.totalCount}; id = $categoryId : " +
+                                    "${t.categoryQuestionCount.easyCount}}/ ")
                         }
 
                         override fun onComplete() {
